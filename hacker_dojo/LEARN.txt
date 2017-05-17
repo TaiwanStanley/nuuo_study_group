@@ -1,0 +1,6 @@
+// Discuss
+// 1. GetOneLineToInt 不太好，能有 cin.ignore(1, '\n') 方法可以去除換行字元
+// 2. 一行程式碼不應該同時存在兩個 function ，且是有順序的
+// 3. 去除 content_lines 可以直接用 for ，少用一個變數
+// 4. vector 查詢速度優於 map，不過視情況而定
+// LEARN: rvalue / lvalue Return Value Optimization
