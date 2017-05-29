@@ -22,15 +22,11 @@ bool IsCloseBracket(char ch)
     return false;
 }
 
-bool PairForBracket(const char * pChar, size_t &i, stack<char> &stack)
+bool PairForBracket(const char * pChar, size_t &i, const char * pTopCharInStack)
 {
-    if (stack.empty())
+    if (pChar[i] == '*')
     {
-        return false;
-    }
-    else if (pChar[i] == '*')
-    {
-        if (stack.top() != '*')
+        if (*pTopCharInStack != '*')
         {
             return false;
         }
@@ -38,28 +34,28 @@ bool PairForBracket(const char * pChar, size_t &i, stack<char> &stack)
     }
     else if (pChar[i] == ')')
     {
-        if (stack.top() != '(')
+        if (*pTopCharInStack != '(')
         {
             return false;
         }
     }
     else if (pChar[i] == ']')
     {
-        if (stack.top() != '[')
+        if (*pTopCharInStack != '[')
         {
             return false;
         }
     }
     else if (pChar[i] == '}')
     {
-        if (stack.top() != '{')
+        if (*pTopCharInStack != '{')
         {
             return false;
         }
     }
     else if (pChar[i] == '>')
     {
-        if (stack.top() != '<')
+        if (*pTopCharInStack != '<')
         {
             return false;
         }
@@ -89,7 +85,12 @@ size_t parseBrackets(const string& str)
         }
         else if (IsCloseBracket(pChar[i]) || (pChar[i] == '*' && (pChar[i+1]) == ')'))
         {
-            if (PairForBracket(pChar, i, stack))
+            if (stack.empty())
+            {
+                return char_position;
+            }
+
+            if (PairForBracket(pChar, i, &stack.top()))
             {
                 stack.pop();
             }
