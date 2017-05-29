@@ -68,11 +68,6 @@ size_t parseBrackets(const string& str)
         }
         else if (IsCloseBracket(pChar[i]) || (pChar[i] == '*' && (pChar[i+1]) == ')'))
         {
-            if (stack.empty())
-            {
-                return char_position;
-            }
-
             if (PairForBracket(pChar, i, &stack.top()))
             {
                 stack.pop();
@@ -114,6 +109,5 @@ int main(void)
     }
 
     system("pause");
-
     return 0;
 }
