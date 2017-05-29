@@ -4,7 +4,6 @@
 
 using namespace std;
 
-stack<char> g_stack;
 
 bool IsOpenBracket(char ch)
 {
@@ -24,22 +23,11 @@ bool IsCloseBracket(char ch)
     return false;
 }
 
-void printStack()
-{
-    stack<char> temp(g_stack);
-    size_t size = temp.size();
-    for (size_t i = 0; i < size; i++)
-    {
-        cout << temp.top() << " ";
-        temp.pop();
-    }
-    cout << endl;
-}
-
 size_t parseBrackets(const string& str)
 {
     const char *pChar = str.c_str();
     size_t char_position = 0;
+    stack<char> stack;
     for (size_t i = 0; i < str.length(); i++)
     {
         char_position++;
@@ -47,72 +35,72 @@ size_t parseBrackets(const string& str)
         {
             if (pChar[i] == '(' && (pChar[i+1]) == '*')
             {
-                g_stack.push('*');
+                stack.push('*');
                 i++;
             }
             else
             {
-                g_stack.push(pChar[i]);
+                stack.push(pChar[i]);
             }
         }
         else if (IsCloseBracket(pChar[i]) || (pChar[i] == '*' && (pChar[i+1]) == ')'))
         {
-            if (g_stack.empty())
+            if (stack.empty())
             {
                 return char_position;
             }
 
             if (pChar[i] == '*')
             {
-                if (g_stack.top() != '*')
+                if (stack.top() != '*')
                 {
                     return char_position;
                 }
-                g_stack.pop();
+                stack.pop();
 
                 i++;
             }
             else if (pChar[i] == ')')
             {
-                if (g_stack.top() != '(')
+                if (stack.top() != '(')
                 {
                     return char_position;
                 }
-                g_stack.pop();
+                stack.pop();
             }
             else if (pChar[i] == ']')
             {
-                if (g_stack.top() != '[')
+                if (stack.top() != '[')
                 {
                     return char_position;
                 }
-                g_stack.pop();
+                stack.pop();
             }
             else if (pChar[i] == '}')
             {
-                if (g_stack.top() != '{')
+                if (stack.top() != '{')
                 {
                     return char_position;
                 }
-                g_stack.pop();
+                stack.pop();
             }
             else if (pChar[i] == '>')
             {
-                if (g_stack.top() != '<')
+                if (stack.top() != '<')
                 {
                     return char_position;
                 }
-                g_stack.pop();
+                stack.pop();
             }
         }
     }
 
-    if (!g_stack.empty())
+    if (!stack.empty())
     {
-        while (!g_stack.empty())
+        while (!stack.empty())
         {
             char_position++;
-            g_stack.pop();
+            stack.pop();
         }
         return char_position;
     }
@@ -125,10 +113,6 @@ int main(void)
     string str;
     while (getline(cin, str))
     {
-        while (!g_stack.empty())
-        {
-            g_stack.pop();
-        }
         size_t t =parseBrackets(str);
         if (t == 0)
         {
