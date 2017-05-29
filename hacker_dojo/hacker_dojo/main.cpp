@@ -13,8 +13,13 @@ bool IsOpenBracket(char ch)
     return false;
 }
 
-bool IsCloseBracket(char ch)
+bool IsCloseBracket(char ch, char nextCh)
 {
+    if (ch == '*' && nextCh == ')')
+    {
+        return true;
+    }
+
     if (ch == ')' || ch == ']' || ch == '}' || ch == '>')
     {
         return true;
@@ -66,7 +71,7 @@ size_t parseBrackets(const string& str)
                 stack.push(pChar[i]);
             }
         }
-        else if (IsCloseBracket(pChar[i]) || (pChar[i] == '*' && (pChar[i+1]) == ')'))
+        else if (IsCloseBracket(pChar[i], pChar[i+1]))
         {
             if (PairForBracket(pChar, i, &stack.top()))
             {
