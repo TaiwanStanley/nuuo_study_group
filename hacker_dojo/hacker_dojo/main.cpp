@@ -32,34 +32,17 @@ bool PairForBracket(const char * pChar, size_t &i, const char * pTopCharInStack)
         }
         i++;
     }
-    else if (pChar[i] == ')')
+    else 
     {
-        if (*pTopCharInStack != '(')
+        if (*pTopCharInStack != '('&& pChar[i] == ')' ||
+            *pTopCharInStack != '['&& pChar[i] == ']' ||
+            *pTopCharInStack != '{'&& pChar[i] == '}' ||
+            *pTopCharInStack != '<'&& pChar[i] == '>')
         {
             return false;
         }
     }
-    else if (pChar[i] == ']')
-    {
-        if (*pTopCharInStack != '[')
-        {
-            return false;
-        }
-    }
-    else if (pChar[i] == '}')
-    {
-        if (*pTopCharInStack != '{')
-        {
-            return false;
-        }
-    }
-    else if (pChar[i] == '>')
-    {
-        if (*pTopCharInStack != '<')
-        {
-            return false;
-        }
-    }
+
     return true;
 }
 
@@ -119,7 +102,7 @@ int main(void)
     string str;
     while (getline(cin, str))
     {
-        size_t t =parseBrackets(str);
+        size_t t = parseBrackets(str);
         if (t == 0)
         {
             cout << "YES" << endl;
