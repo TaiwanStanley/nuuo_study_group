@@ -4,7 +4,6 @@
 
 using namespace std;
 
-
 bool IsOpenBracket(char ch)
 {
     if (ch =='(' || ch == '[' || ch == '{' || ch == '<')
@@ -21,6 +20,51 @@ bool IsCloseBracket(char ch)
         return true;
     }
     return false;
+}
+
+bool PairForBracket(const char * pChar, size_t &i, stack<char> &stack)
+{
+    if (stack.empty())
+    {
+        return false;
+    }
+    else if (pChar[i] == '*')
+    {
+        if (stack.top() != '*')
+        {
+            return false;
+        }
+        i++;
+    }
+    else if (pChar[i] == ')')
+    {
+        if (stack.top() != '(')
+        {
+            return false;
+        }
+    }
+    else if (pChar[i] == ']')
+    {
+        if (stack.top() != '[')
+        {
+            return false;
+        }
+    }
+    else if (pChar[i] == '}')
+    {
+        if (stack.top() != '{')
+        {
+            return false;
+        }
+    }
+    else if (pChar[i] == '>')
+    {
+        if (stack.top() != '<')
+        {
+            return false;
+        }
+    }
+    return true;
 }
 
 size_t parseBrackets(const string& str)
@@ -45,52 +89,13 @@ size_t parseBrackets(const string& str)
         }
         else if (IsCloseBracket(pChar[i]) || (pChar[i] == '*' && (pChar[i+1]) == ')'))
         {
-            if (stack.empty())
+            if (PairForBracket(pChar, i, stack))
+            {
+                stack.pop();
+            }
+            else
             {
                 return char_position;
-            }
-
-            if (pChar[i] == '*')
-            {
-                if (stack.top() != '*')
-                {
-                    return char_position;
-                }
-                stack.pop();
-
-                i++;
-            }
-            else if (pChar[i] == ')')
-            {
-                if (stack.top() != '(')
-                {
-                    return char_position;
-                }
-                stack.pop();
-            }
-            else if (pChar[i] == ']')
-            {
-                if (stack.top() != '[')
-                {
-                    return char_position;
-                }
-                stack.pop();
-            }
-            else if (pChar[i] == '}')
-            {
-                if (stack.top() != '{')
-                {
-                    return char_position;
-                }
-                stack.pop();
-            }
-            else if (pChar[i] == '>')
-            {
-                if (stack.top() != '<')
-                {
-                    return char_position;
-                }
-                stack.pop();
             }
         }
     }
