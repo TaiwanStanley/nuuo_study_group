@@ -21,9 +21,15 @@
     <ClCompile Include="StandardNumberCompiler.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="TelephoneNumberForm.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="StandardNumberCompiler.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="TelephoneNumberForm.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

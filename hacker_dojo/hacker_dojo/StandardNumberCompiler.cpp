@@ -46,22 +46,3 @@ const unsigned char CStandardNumberCompiler::LookupTable(const unsigned char ch)
     }
     return ch;
 }
-
-string CStandardNumberCompiler::ToStandardForm(const string& tel_number)
-{
-    string standard_form = "";
-    CStandardNumberCompiler pNumCompiler = CreateCompilerInstance();
-    for (size_t i = 0; i < tel_number.length(); i++)
-    {
-        string ch = string(1, pNumCompiler.LookupTable(tel_number.at(i)));
-        if (ch != "-" && ch != " ")
-        {
-            standard_form += ch;
-            if (standard_form.length() == 3)
-            {
-                standard_form += '-';
-            }
-        }
-    }
-    return standard_form;
-}

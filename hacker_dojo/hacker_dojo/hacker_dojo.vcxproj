@@ -66,9 +66,11 @@
   <ItemGroup>
     <ClCompile Include="main.cpp" />
     <ClCompile Include="StandardNumberCompiler.cpp" />
+    <ClCompile Include="TelephoneNumberForm.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="StandardNumberCompiler.h" />
+    <ClInclude Include="TelephoneNumberForm.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
