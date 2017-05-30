@@ -6,6 +6,11 @@
 #include "TelephoneNumberForm.h"
 using namespace std;
 
+enum Uva755
+{
+    MAX_ONE_LINE_CHAR = 100000,
+};
+
 inline int GetOneLineToInt()
 {
     string value;
@@ -21,7 +26,7 @@ int main(void)
     {
         CTelephoneNumberForm teleform;
 
-        cin.ignore(100000, '\n');
+        cin.ignore(MAX_ONE_LINE_CHAR, '\n');
         int telephone_number_list = GetOneLineToInt();
 
         for (int i = 0; i < telephone_number_list; i++)
