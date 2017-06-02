@@ -19,7 +19,7 @@ class CParallelogram
 {
 public:
     void split_each_podoubles(const std::string& line);
-    std::tuple<double, double> get_fourth_podouble();
+    std::tuple<double, double> get_fourth_point();
 
 private:
     void insert_vertex(const std::pair<double, double>& pV);

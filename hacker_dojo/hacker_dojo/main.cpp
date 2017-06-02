@@ -11,7 +11,7 @@ void test_case(const string& line)
     CParallelogram parallelo;
     parallelo.split_each_podoubles(line);
     CVertex v_tex;
-    tie(v_tex.x, v_tex.y) = parallelo.get_fourth_podouble();
+    tie(v_tex.x, v_tex.y) = parallelo.get_fourth_point();
     cout << fixed << setprecision(3) << v_tex.x << " " << v_tex.y << endl;
 }
 
