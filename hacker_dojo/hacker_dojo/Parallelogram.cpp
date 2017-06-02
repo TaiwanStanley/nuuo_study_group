@@ -29,11 +29,6 @@ void CParallelogram::split_each_podoubles(const string& line)
 
 tuple<double, double> CParallelogram::get_fourth_podouble()
 {
-    if (m_vertices.empty())
-    {
-        return make_tuple(0.0, 0.0);
-    }
-
     vector<pair<double, double>> except_duplicate_vertices;
     for (auto it : m_vertices)
     {
