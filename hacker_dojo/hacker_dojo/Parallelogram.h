@@ -4,7 +4,7 @@
 #include <tuple>
 
 template<class T>
-T get_middle_point(T T1, T T2)
+T get_middle_point(const T& T1, const T& T2)
 {
     return (T1 + T2) / 2;
 }
