@@ -7,22 +7,22 @@ using namespace std;
 void CParallelogram::split_each_podoubles(const string& line)
 {
     stringstream ss(line);
-    string podouble;
+    string point;
 
     CVertex vtex;
     int count = 0;
 
-    while (getline(ss, podouble, ' '))
+    while (getline(ss, point, ' '))
     {
         count++;
         if (count % 2 == 0)
         {
-            vtex.y = stod(podouble);
+            vtex.y = stod(point);
             insert_vertex(make_pair(vtex.x, vtex.y));
         }
         else /*if (count % 2 == 1)*/
         {
-            vtex.x = stod(podouble);
+            vtex.x = stod(point);
         }
     }
 }

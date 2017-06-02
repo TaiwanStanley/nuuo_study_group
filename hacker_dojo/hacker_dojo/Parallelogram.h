@@ -17,10 +17,8 @@ typedef struct CVertex
 
 class CParallelogram
 {
-
 public:
     void split_each_podoubles(const std::string& line);
-
     std::tuple<double, double> get_fourth_podouble();
 
 private:

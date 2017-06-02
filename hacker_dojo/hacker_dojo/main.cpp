@@ -10,9 +10,9 @@ void test_case(const string& line)
 {
     CParallelogram parallelo;
     parallelo.split_each_podoubles(line);
-    CVertex Vtex;
-    tie(Vtex.x, Vtex.y) = parallelo.get_fourth_podouble();
-    cout << fixed << setprecision(3) << Vtex.x << " " << Vtex.y << endl;
+    CVertex v_tex;
+    tie(v_tex.x, v_tex.y) = parallelo.get_fourth_podouble();
+    cout << fixed << setprecision(3) << v_tex.x << " " << v_tex.y << endl;
 }
 
 int main(void)
