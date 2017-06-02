@@ -50,8 +50,7 @@ tuple<double, double> CParallelogram::get_fourth_podouble()
 
 void CParallelogram::insert_vertex(const pair<double, double>& pV)
 {
-    auto it = m_vertices.find(pV);
-    if (it != m_vertices.end())
+    if (m_vertices.find(pV) != m_vertices.end())
     {
         m_duplicate_vertices = pV;
     }
