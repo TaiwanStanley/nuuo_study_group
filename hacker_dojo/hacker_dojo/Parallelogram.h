@@ -4,7 +4,7 @@
 #include <tuple>
 
 template<class T>
-T get_middle_podouble(T T1, T T2)
+T get_middle_point(T T1, T T2)
 {
     return (T1 + T2) / 2;
 }
@@ -21,7 +21,7 @@ class CParallelogram
 public:
     void split_each_podoubles(const std::string& line);
 
-    std::tuple<double, double> calculate_fourth_podouble();
+    std::tuple<double, double> get_fourth_podouble();
 
 private:
     void insert_vertex(const std::pair<double, double>& pV);

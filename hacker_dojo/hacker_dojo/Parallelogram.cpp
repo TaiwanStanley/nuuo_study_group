@@ -27,7 +27,7 @@ void CParallelogram::split_each_podoubles(const string& line)
     }
 }
 
-tuple<double, double> CParallelogram::calculate_fourth_podouble()
+tuple<double, double> CParallelogram::get_fourth_podouble()
 {
     if (m_vertices.empty())
     {
@@ -48,8 +48,8 @@ tuple<double, double> CParallelogram::calculate_fourth_podouble()
     CVertex vMid;
     if (two_vertices.size() == 2)
     {
-        vMid.x = get_middle_podouble(two_vertices[0].first, two_vertices[1].first);
-        vMid.y = get_middle_podouble(two_vertices[0].second, two_vertices[1].second);
+        vMid.x = get_middle_point(except_duplicate_vertices[0].first, except_duplicate_vertices[1].first);
+        vMid.y = get_middle_point(except_duplicate_vertices[0].second, except_duplicate_vertices[1].second);
     }
 
     return make_tuple((vMid.x * 2 - m_duplicate_vertices.first), (vMid.y * 2 - m_duplicate_vertices.second));
