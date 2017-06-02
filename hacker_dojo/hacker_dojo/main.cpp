@@ -22,4 +22,5 @@ int main(void)
     {
         test_case(line);
     }
+    return 0;
 }
