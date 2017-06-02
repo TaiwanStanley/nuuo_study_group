@@ -10,7 +10,7 @@ void CParallelogram::split_each_point(const string& line)
     stringstream ss(line);
     string point;
 
-    CVertex vtex;
+    vertex vtex;
     int count = 0;
 
     while (getline(ss, point, ' '))
@@ -41,7 +41,7 @@ tuple<double, double> CParallelogram::get_fourth_point()
 
     try
     {
-        CVertex vMid;
+        vertex vMid;
         vMid.x = get_middle_point(except_duplicate_vertices.at(0).first, except_duplicate_vertices.at(1).first);
         vMid.y = get_middle_point(except_duplicate_vertices.at(0).second, except_duplicate_vertices.at(1).second);
         return make_tuple((vMid.x * 2 - m_duplicate_vertices.first), (vMid.y * 2 - m_duplicate_vertices.second));
