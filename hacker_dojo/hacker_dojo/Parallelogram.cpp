@@ -37,9 +37,7 @@ tuple<double, double> CParallelogram::get_fourth_podouble()
     vector<pair<double, double>> except_duplicate_vertices;
     for (auto it : m_vertices)
     {
-        pair<double, double> v = it;
-
-        if (m_duplicate_vertices != v)
+        if (m_duplicate_vertices != it)
         {
             except_duplicate_vertices.push_back(it);
         }
