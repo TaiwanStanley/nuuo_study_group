@@ -34,19 +34,19 @@ tuple<double, double> CParallelogram::get_fourth_podouble()
         return make_tuple(0.0, 0.0);
     }
 
-    vector<pair<double, double>> two_vertices;
+    vector<pair<double, double>> except_duplicate_vertices;
     for (auto it : m_vertices)
     {
         pair<double, double> v = it;
 
         if (m_duplicate_vertices != v)
         {
-            two_vertices.push_back(v);
+            except_duplicate_vertices.push_back(it);
         }
     }
 
     CVertex vMid;
-    if (two_vertices.size() == 2)
+    if (except_duplicate_vertices.size() == 2)
     {
         vMid.x = get_middle_point(except_duplicate_vertices[0].first, except_duplicate_vertices[1].first);
         vMid.y = get_middle_point(except_duplicate_vertices[0].second, except_duplicate_vertices[1].second);
