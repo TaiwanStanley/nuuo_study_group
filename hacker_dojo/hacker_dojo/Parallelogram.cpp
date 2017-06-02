@@ -1,6 +1,7 @@
 #include <vector>
 #include <sstream>
 #include "Parallelogram.h"
+#include <stdexcept>
 
 using namespace std;
 
@@ -38,14 +39,17 @@ tuple<double, double> CParallelogram::get_fourth_podouble()
         }
     }
 
-    CVertex vMid;
-    if (except_duplicate_vertices.size() == 2)
+    try
     {
-        vMid.x = get_middle_point(except_duplicate_vertices[0].first, except_duplicate_vertices[1].first);
-        vMid.y = get_middle_point(except_duplicate_vertices[0].second, except_duplicate_vertices[1].second);
+        CVertex vMid;
+        vMid.x = get_middle_point(except_duplicate_vertices.at(0).first, except_duplicate_vertices.at(1).first);
+        vMid.y = get_middle_point(except_duplicate_vertices.at(0).second, except_duplicate_vertices.at(1).second);
+        return make_tuple((vMid.x * 2 - m_duplicate_vertices.first), (vMid.y * 2 - m_duplicate_vertices.second));
     }
-
-    return make_tuple((vMid.x * 2 - m_duplicate_vertices.first), (vMid.y * 2 - m_duplicate_vertices.second));
+    catch (const out_of_range& oor)
+    {
+        return make_tuple(0.0, 0.0);
+    }
 }
 
 void CParallelogram::insert_vertex(const pair<double, double>& pV)
