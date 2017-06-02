@@ -8,6 +8,9 @@ using namespace std;
 
 void test_case(const string& line)
 {
+    if (line.empty())
+        return;
+
     CParallelogram parallelo;
     parallelo.split_each_point(line);
     CVertex v_tex;
