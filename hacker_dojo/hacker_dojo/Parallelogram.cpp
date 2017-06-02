@@ -3,10 +3,9 @@
 #include <stdexcept>
 #include "Parallelogram.h"
 
-
 using namespace std;
 
-void CParallelogram::split_each_podoubles(const string& line)
+void CParallelogram::split_each_point(const string& line)
 {
     stringstream ss(line);
     string point;
