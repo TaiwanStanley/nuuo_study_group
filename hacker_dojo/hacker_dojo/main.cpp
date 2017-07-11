@@ -1,8 +1,8 @@
 #include <iostream>
-
 #include <vector>
 #include <regex>
 #include <string>
+#include <memory>
 using namespace std;
 
 template<typename T>
@@ -12,17 +12,13 @@ public:
     CNode(T v) : m_previous(nullptr), m_next_sibling(nullptr), m_previous_sibling(nullptr), m_value(v) {}
     ~CNode()
     {
-        delete m_previous;
-        for ( auto &child : m_children)
-        {
-            delete child;
-        }
+        cout << m_value << endl;
     }
 
-    CNode<T>* m_previous;
-    CNode<T>* m_next_sibling;
-    CNode<T>* m_previous_sibling;
-    vector<CNode<T>*> m_children;
+    shared_ptr<CNode<T>> m_previous;
+    shared_ptr<CNode<T>> m_next_sibling;
+    shared_ptr<CNode<T>> m_previous_sibling;
+    vector<shared_ptr<CNode<T>>> m_children;
 
     T m_value;
 protected:
@@ -47,12 +43,13 @@ public:
     CTreeList() : m_present(nullptr), m_root(nullptr) {}
     ~CTreeList()
     { 
-
+        m_present = nullptr;
+        m_root = nullptr;
     };
 
     void insert_child(T value)
     {
-        CNode<T>* newNode = new CNode<T>(value);
+        shared_ptr<CNode<T>> newNode(new CNode<T>(value));
         if (m_present != nullptr)
         {
             m_present->m_children.push_back(newNode);
@@ -60,7 +57,7 @@ public:
             
             if (m_present->m_children.size() > 1)
             {
-                CNode<T>* sibling = m_present->m_children[m_present->m_children.size() - 2]; // index start from 0
+                shared_ptr<CNode<T>> sibling = m_present->m_children[m_present->m_children.size() - 2]; // index start from 0
                 newNode->m_previous_sibling = sibling;
                 sibling->m_next_sibling = newNode;
             }
@@ -73,30 +70,30 @@ public:
         m_present = newNode;
     }
 
-    CNode<T>* get_root()
+    shared_ptr<CNode<T>> get_root()
     {
         return m_root;
     }
 
-    void set_present(CNode<T>* node)
+    void set_present(shared_ptr<CNode<T>> node)
     {
         m_present = node;
     }
 
-    CNode<T>* get_present()
+    shared_ptr<CNode<T>> get_present()
     {
         return m_present;
     }
 
     void goto_previous_level()
     {
-        CNode<T>* node = m_present->m_previous;
+        shared_ptr<CNode<T>> node = m_present->m_previous;
         m_present = node;
     }
 
 private:
-    CNode<T>* m_present;
-    CNode<T>* m_root;
+    shared_ptr<CNode<T>> m_present;
+    shared_ptr<CNode<T>> m_root;
 };
 
 class DOMParsing
@@ -139,8 +136,8 @@ public:
     string do_search(const string& instruction)
     {
         string value("");
-        CNode<string>* present = m_tree.get_present();
-        CNode<string>* node = present;
+        shared_ptr<CNode<string>> present = m_tree.get_present();
+        shared_ptr<CNode<string>> node = present;
         if (instruction == "first_child")
         {
             if (present->m_children.size() > 0)
@@ -190,24 +187,24 @@ private:
     regex m_opening_template;
 };
 
-void build_tree_each_node(int dom_lines, DOMParsing &dom)
+void build_tree_each_node(int dom_lines, shared_ptr<DOMParsing> dom)
 {
     string sline;
     while (dom_lines--)
     {
         getline(cin, sline);
-        dom.parsing_line(sline);
+        dom->parsing_line(sline);
     }
 }
 
-void do_search(DOMParsing &dom)
+void do_search(shared_ptr<DOMParsing> dom)
 {
     static int cases = 1;
 
     string sline;
     cout << "Case " << cases << ":" << endl;
 
-    dom.read_to_search();
+    dom->read_to_search();
 
     int lines = 0;
     cin >> lines;
@@ -216,14 +213,14 @@ void do_search(DOMParsing &dom)
     while (lines--)
     {
         getline(cin, sline);
-        cout << dom.do_search(sline) << endl;
+        cout << dom->do_search(sline) << endl;
     }
     cases++;
 }
 
 void test_case(int dom_lines)
 {
-    DOMParsing dom;
+    shared_ptr<DOMParsing> dom(new DOMParsing());
     build_tree_each_node(dom_lines, dom);
     do_search(dom);
 }
