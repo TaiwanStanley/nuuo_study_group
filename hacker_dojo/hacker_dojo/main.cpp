@@ -190,23 +190,28 @@ private:
     regex m_opening_template;
 };
 
-void test_case(int dom_lines)
+void build_tree_each_node(int dom_lines, DOMParsing &dom)
 {
-    static int cases = 1;
-    DOMParsing dom;
     string sline;
-    
     while (dom_lines--)
     {
         getline(cin, sline);
         dom.parsing_line(sline);
     }
+}
+
+void do_search(DOMParsing &dom)
+{
+    static int cases = 1;
+
+    string sline;
+    cout << "Case " << cases << ":" << endl;
 
     dom.read_to_search();
+
     int lines = 0;
     cin >> lines;
     cin.ignore();
-    cout << "Case " << cases << ":" << endl;
 
     while (lines--)
     {
@@ -214,6 +219,13 @@ void test_case(int dom_lines)
         cout << dom.do_search(sline) << endl;
     }
     cases++;
+}
+
+void test_case(int dom_lines)
+{
+    DOMParsing dom;
+    build_tree_each_node(dom_lines, dom);
+    do_search(dom);
 }
 
 int main()
