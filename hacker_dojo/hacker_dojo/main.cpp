@@ -5,7 +5,6 @@
 #include <string>
 using namespace std;
 
-void test_case()
 template<typename T>
 class CNode
 {
@@ -191,15 +190,43 @@ private:
     regex m_opening_template;
 };
 
+void test_case(int dom_lines)
+{
+    static int cases = 1;
+    DOMParsing dom;
+    string sline;
+    
+    while (dom_lines--)
+    {
+        getline(cin, sline);
+        dom.parsing_line(sline);
+    }
+
+    dom.read_to_search();
+    int lines = 0;
+    cin >> lines;
+    cin.ignore();
+    cout << "Case " << cases << ":" << endl;
+
+    while (lines--)
+    {
+        getline(cin, sline);
+        cout << dom.do_search(sline) << endl;
+    }
+    cases++;
 }
 
 int main()
 {
-    int cases = 0;
-    cin >> cases;
-    while (cases--)
+    int dom_lines = 0;
+    cin >> dom_lines;
+    cin.ignore();
+
+    while (dom_lines > 0)
     {
-        test_case();
+        test_case(dom_lines);
+        cin >> dom_lines;
+        cin.ignore();
     }
 
     return 0;
