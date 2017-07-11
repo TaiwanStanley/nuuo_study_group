@@ -1,6 +1,8 @@
 #include <iostream>
 
 #include <vector>
+#include <regex>
+#include <string>
 using namespace std;
 
 void test_case()
@@ -97,6 +99,98 @@ private:
     CNode<T>* m_present;
     CNode<T>* m_root;
 };
+
+class DOMParsing
+{
+    enum eDOOR
+    {
+        OPENING,
+        CLOSING
+    };
+public:
+    DOMParsing():
+        m_opening_template("\'(.+)\'")
+    {};
+    ~DOMParsing(){};
+    
+    void parsing_line(const string& line)
+    {
+        string value;
+        eDOOR door(CLOSING);
+        if ( (value = get_value(line)) != string(""))
+        {
+            door = OPENING;
+        }
+
+        if (door == CLOSING)
+        {
+            m_tree.goto_previous_level();
+        }
+        else
+        {
+            m_tree.insert_child(value);
+        }
+    }
+
+    void read_to_search()
+    {
+        m_tree.set_present(m_tree.get_root());
+    }
+
+    string do_search(const string& instruction)
+    {
+        string value("");
+        CNode<string>* present = m_tree.get_present();
+        CNode<string>* node = present;
+        if (instruction == "first_child")
+        {
+            if (present->m_children.size() > 0)
+            {
+                node = present->m_children[0];
+            }
+        }
+        else if (instruction == "next_sibling")
+        {
+            if (present->m_next_sibling != nullptr)
+            {
+                node = present->m_next_sibling;
+            }
+        }
+        else if (instruction == "previous_sibling")
+        {
+            if (present->m_previous_sibling != nullptr)
+            {
+                node = present->m_previous_sibling;
+            }
+        }
+        else if (instruction == "parent")
+        {
+            if (present->m_previous != nullptr)
+            {
+                node = present->m_previous;
+            }
+        }
+        m_tree.set_present(node);
+        value = node->m_value;
+        return value;
+    }
+
+private:
+    string get_value(const string& str)
+    {
+        smatch pieces_match;
+        if (regex_search(str, pieces_match, m_opening_template))
+        {
+            return string(pieces_match[1]);
+        }
+        return string("");
+    }
+
+private:
+    CTreeList<string> m_tree;
+    regex m_opening_template;
+};
+
 }
 
 int main()
