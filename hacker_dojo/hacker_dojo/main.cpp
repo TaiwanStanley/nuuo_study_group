@@ -12,13 +12,19 @@ public:
     CNode(T v) : m_previous(nullptr), m_next_sibling(nullptr), m_previous_sibling(nullptr), m_value(v) {}
     ~CNode()
     {
-        cout << m_value << endl;
+        for (size_t i = 0; i < m_children.size(); i++)
+        {
+            if (m_children[i])
+            {
+                delete m_children[i];
+            }
+        }
     }
 
-    shared_ptr<CNode<T>> m_previous;
-    shared_ptr<CNode<T>> m_next_sibling;
-    shared_ptr<CNode<T>> m_previous_sibling;
-    vector<shared_ptr<CNode<T>>> m_children;
+    CNode<T>* m_previous;
+    CNode<T>* m_next_sibling;
+    CNode<T>* m_previous_sibling;
+    vector<CNode<T>*> m_children;
 
     T m_value;
 protected:
@@ -43,13 +49,12 @@ public:
     CTreeList() : m_present(nullptr), m_root(nullptr) {}
     ~CTreeList()
     { 
-        m_present = nullptr;
-        m_root = nullptr;
+        delete m_root;
     };
 
     void insert_child(T value)
     {
-        shared_ptr<CNode<T>> newNode(new CNode<T>(value));
+        CNode<T>* newNode(new CNode<T>(value));
         if (m_present != nullptr)
         {
             m_present->m_children.push_back(newNode);
@@ -57,7 +62,7 @@ public:
             
             if (m_present->m_children.size() > 1)
             {
-                shared_ptr<CNode<T>> sibling = m_present->m_children[m_present->m_children.size() - 2]; // index start from 0
+                CNode<T>* sibling = m_present->m_children[m_present->m_children.size() - 2]; // index start from 0
                 newNode->m_previous_sibling = sibling;
                 sibling->m_next_sibling = newNode;
             }
@@ -70,30 +75,30 @@ public:
         m_present = newNode;
     }
 
-    shared_ptr<CNode<T>> get_root()
+    CNode<T>* get_root()
     {
         return m_root;
     }
 
-    void set_present(shared_ptr<CNode<T>> node)
+    void set_present(CNode<T>* node)
     {
         m_present = node;
     }
 
-    shared_ptr<CNode<T>> get_present()
+    CNode<T>* get_present()
     {
         return m_present;
     }
 
     void goto_previous_level()
     {
-        shared_ptr<CNode<T>> node = m_present->m_previous;
+        CNode<T>* node = m_present->m_previous;
         m_present = node;
     }
 
 private:
-    shared_ptr<CNode<T>> m_present;
-    shared_ptr<CNode<T>> m_root;
+    CNode<T>* m_present;
+    CNode<T>* m_root;
 };
 
 class DOMParsing
@@ -136,8 +141,8 @@ public:
     string do_search(const string& instruction)
     {
         string value("");
-        shared_ptr<CNode<string>> present = m_tree.get_present();
-        shared_ptr<CNode<string>> node = present;
+        CNode<string>* present = m_tree.get_present();
+        CNode<string>* node = present;
         if (instruction == "first_child")
         {
             if (present->m_children.size() > 0)
