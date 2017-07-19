@@ -6,7 +6,7 @@
 #include <vector>
 using namespace std;
 
-void testcase(map<char ,int >& table)
+void testcase(map<char, int >& table)
 {
     string str;
     getline(cin, str);
@@ -28,7 +28,7 @@ void testcase(map<char ,int >& table)
     }
 }
 
-void output(map<char, int>& table)
+void output(const map<char, int>& table)
 {
     vector<pair<char, int> > vcopy(table.begin(), table.end());
 
@@ -52,7 +52,7 @@ int main()
     {
         testcase(table);
     }
-    
+
     output(table);
 
     return 0;
