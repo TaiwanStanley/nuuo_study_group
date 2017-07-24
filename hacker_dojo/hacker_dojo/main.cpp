@@ -14,7 +14,7 @@ void testcase(map<char, int >& table)
     for (auto v : str)
     {
         v = toupper(v);
-        if (v >= 'A' && v <= 'Z')
+        if (isalpha(v))
         {
             if (table.find(v) != table.end())
             {
