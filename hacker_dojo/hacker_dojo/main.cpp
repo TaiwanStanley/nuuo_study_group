@@ -2,9 +2,10 @@
 #include <vector>
 #include <string>
 #include <stdexcept>
+#include <algorithm>
 using namespace std;
 
-bool test_case(vector<string>& minesweeper, const vector<string>& touched_pos)
+void test_case(vector<string>& minesweeper, const vector<string>& touched_pos)
 {
     bool got_mine = false;
 
@@ -44,25 +45,21 @@ bool test_case(vector<string>& minesweeper, const vector<string>& touched_pos)
             }
         }
     }
-    return got_mine;
+
+    if (got_mine == false)
+    {
+        for (auto v : minesweeper)
+        {
+            std::replace(v.begin(), v.end(), '*', '.'); // replace all 'x' to 'y'
+        }
+    }
 }
 
-void output(const vector<string>& minesweeper, bool got_mine, size_t testcase)
+void output(vector<string>& minesweeper, size_t testcase)
 {
     for (auto v : minesweeper)
     {
-        if (got_mine)
-        {
-            cout << v;
-        }
-        else
-        {
-            for (auto s : v)
-            {
-                s == '*' ? cout << '.' : cout << s;
-            }
-        }
-        cout << endl;
+        cout << v << endl;
     }
 
     if (testcase > 0)
@@ -98,9 +95,9 @@ int main()
             touched_pos.push_back(str);
         }
 
-        bool got_mine = test_case(minesweeper, touched_pos);
+        test_case(minesweeper, touched_pos);
 
-        output(minesweeper, got_mine, testcase);
+        output(minesweeper, testcase);
     }
 
     return 0;
