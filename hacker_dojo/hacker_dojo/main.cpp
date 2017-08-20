@@ -5,57 +5,82 @@
 #include <algorithm>
 using namespace std;
 
-void test_case(vector<string>& minesweeper, const vector<string>& touched_pos)
+class mine_sweeper
 {
-    bool got_mine = false;
+public:
+    mine_sweeper(const vector<string>& grid)
+        : m_got_mine(false), m_grid(grid)
+    {}
 
-    for (size_t rows = 0; rows < minesweeper.size(); rows++)
+    void stamp(size_t x, size_t y, const char c)
     {
-        for (size_t columns = 0; columns < minesweeper[rows].size(); columns++)
+        if (c == 'x')
         {
-            if (touched_pos[rows][columns] == 'x')
+            if (m_grid[x][y] == '*')
             {
-                if (minesweeper[rows][columns] == '*')
-                {
-                    // bomb
-                    got_mine = true;
-                }
-                else
-                {
-                    // do mask (3*3)
-                    char nighborhood_mines = '0';
-                    for (int i = -1; i <= 1; i++)
-                    {
-                        for (int j = -1; j <= 1; j++)
-                        {
-                            try
-                            {
-                                if (minesweeper.at(rows + i).at(columns + j) == '*')
-                                {
-                                    nighborhood_mines = nighborhood_mines + 1;
-                                }
-                            }
-                            catch (const out_of_range& oor)
-                            {
-                            }
-                        }
-                    }
-                    minesweeper[rows][columns] = nighborhood_mines;
-                }
+                // bomb
+                m_got_mine = true;
+            }
+            else
+            {
+                // do mask (3*3)
+                do_mask(x, y);
             }
         }
     }
 
-    if (got_mine == false)
+    const vector<string>& result()
     {
-        for (auto v : minesweeper)
+        if (m_got_mine == false)
         {
-            std::replace(v.begin(), v.end(), '*', '.'); // replace all 'x' to 'y'
+            for (auto &v : m_grid)
+            {
+                std::replace(v.begin(), v.end(), '*', '.');
+            }
+        }
+        return m_grid;
+    }
+
+private:
+    void do_mask(size_t x, size_t y)
+    {
+        char nighborhood_mines = '0';
+        for (int i = -1; i <= 1; i++)
+        {
+            for (int j = -1; j <= 1; j++)
+            {
+                try
+                {
+                    if (m_grid.at(x + i).at(y + j) == '*')
+                    {
+                        nighborhood_mines = nighborhood_mines + 1;
+                    }
+                }
+                catch (const out_of_range& oor)
+                {
+                }
+            }
+        }
+        m_grid[x][y] = nighborhood_mines;
+    }
+
+private:
+    bool m_got_mine;
+    vector<string> m_grid;
+};
+
+void test_case(mine_sweeper &sweeper, const vector<string>& touched_pos)
+{
+    for (size_t rows = 0; rows < touched_pos.size(); rows++)
+    {
+        for (size_t columns = 0; columns < touched_pos[rows].size(); columns++)
+        {
+            sweeper.stamp(rows, columns, touched_pos[rows][columns]);
         }
     }
 }
 
-void output(vector<string>& minesweeper, size_t testcase)
+void output(const vector<string>& minesweeper, size_t testcase)
 {
     for (auto v : minesweeper)
     {
@@ -67,7 +92,6 @@ void output(vector<string>& minesweeper, size_t testcase)
         cout << endl;
     }
 }
-
 
 int main()
 {
@@ -87,7 +111,9 @@ int main()
             getline(cin, str);
             minesweeper.push_back(str);
         }
-        
+
+        mine_sweeper game(minesweeper);
+
         for (size_t i = 0; i < lines; i++)
         {
             string str;
@@ -95,9 +121,9 @@ int main()
             touched_pos.push_back(str);
         }
 
-        test_case(minesweeper, touched_pos);
+        test_case(game, touched_pos);
 
-        output(minesweeper, testcase);
+        output(game.result(), testcase);
     }
 
     return 0;
