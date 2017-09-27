@@ -6,30 +6,31 @@ using namespace std;
 
 static inline size_t reverse_digital(size_t input)
 {
-    size_t r_value = 0;
-    while (input > 0)
-    {
-        size_t last_digital = input % 10;
-        r_value = r_value * 10 + last_digital;
-        input = input / 10;
-    }
-    return r_value;
+    string s_input = to_string(input);
+    reverse(s_input.begin(), s_input.end());
+    return stoul(s_input);
 }
 
 void cal_digital_palindrome(size_t& result, size_t& times)
 {
-    size_t r_value = reverse_digital(result);
-
-    while (r_value != result || (times == 0))
+    try
     {
-        if ((times >= 1000) || (result >= 4294967295))
-        {
-            return;
-        }
+        size_t r_value = reverse_digital(result);
 
-        result += r_value;
-        times++;
-        r_value = reverse_digital(result);
+        while (r_value != result || (times == 0))
+        {
+            if ((times >= 1000) || (result >= 4294967295))
+            {
+                return;
+            }
+
+            result += r_value;
+            times++;
+            r_value = reverse_digital(result);
+        }
+    }
+    catch (...) // std::out_of_range, std::invalid_argument
+    {
     }
 }
 
