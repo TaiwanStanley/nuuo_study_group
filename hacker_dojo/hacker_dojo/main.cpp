@@ -4,7 +4,7 @@
 #include <sstream>
 using namespace std;
 
-static inline size_t reverse_integer(size_t input)
+static inline size_t reverse_digital(size_t input)
 {
     size_t r_value = 0;
     while (input > 0)
@@ -18,7 +18,7 @@ static inline size_t reverse_integer(size_t input)
 
 void cal_digital_palindrome(size_t& result, size_t& times)
 {
-    size_t r_value = reverse_integer(result);
+    size_t r_value = reverse_digital(result);
 
     while (r_value != result || (times == 0))
     {
@@ -29,7 +29,7 @@ void cal_digital_palindrome(size_t& result, size_t& times)
 
         result += r_value;
         times++;
-        r_value = reverse_integer(result);
+        r_value = reverse_digital(result);
     }
 }
 
