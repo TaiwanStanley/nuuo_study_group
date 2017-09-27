@@ -4,21 +4,21 @@
 #include <sstream>
 using namespace std;
 
-static inline unsigned int reverse_integer(unsigned int input)
+static inline size_t reverse_integer(size_t input)
 {
-    unsigned int r_value = 0;
+    size_t r_value = 0;
     while (input > 0)
     {
-        int last_digital = input % 10;
+        size_t last_digital = input % 10;
         r_value = r_value * 10 + last_digital;
         input = input / 10;
     }
     return r_value;
 }
 
-void cal_digital_palindrome(unsigned int &result, int& times)
+void cal_digital_palindrome(size_t& result, size_t& times)
 {
-    unsigned int r_value = reverse_integer(result);
+    size_t r_value = reverse_integer(result);
 
     while (r_value != result || (times == 0))
     {
@@ -33,9 +33,9 @@ void cal_digital_palindrome(unsigned int &result, int& times)
     }
 }
 
-string testcases(unsigned int result)
+string testcases(size_t result)
 {
-    int times = 0;
+    size_t times = 0;
     cal_digital_palindrome(result, times);
     ostringstream oss;
     oss << times << " " << result;
@@ -44,7 +44,7 @@ string testcases(unsigned int result)
 
 int main()
 {
-    int lines;
+    size_t lines;
 
     cin >> lines;
     cin.ignore(1, '\n');
@@ -53,7 +53,7 @@ int main()
     {
         string str;
         getline(cin, str);
-        cout << testcases(stoi(str)) << endl;
+        cout << testcases(stoul(str)) << endl;
     }
 
     return 0;
