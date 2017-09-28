@@ -17,7 +17,7 @@ void cal_digital_palindrome(size_t& result, size_t& times)
     {
         size_t r_value = reverse_digital(result);
 
-        while (r_value != result || (times == 0))
+        do
         {
             if ((times >= 1000) || (result >= 4294967295))
             {
@@ -27,7 +27,7 @@ void cal_digital_palindrome(size_t& result, size_t& times)
             result += r_value;
             times++;
             r_value = reverse_digital(result);
-        }
+        } while (r_value != result);
     }
     catch (...) // std::out_of_range, std::invalid_argument
     {
