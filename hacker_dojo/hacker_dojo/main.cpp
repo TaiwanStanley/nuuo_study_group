@@ -23,12 +23,7 @@ public:
             m_chess_set.push_back(parse_row(row));
         }
 
-        void insert_row(const vector<char> &row)
-        {
-            m_chess_set.push_back(row);
-        }
-
-        const vector<char> &get_row(size_t x) const
+        const string &get_row(size_t x) const
         {
             return m_chess_set.at(x);
         }
@@ -39,26 +34,25 @@ public:
         }
 
     private:
-        vector<char> parse_row(const string &row)
+        string parse_row(const string &row)
         {
-            vector<char> v_row;
+            string s_row;
             for (const auto i : row)
             {
                 if (isdigit(i))
                 {
-                    v_row.insert(v_row.end(), atoi(&i), ' ');
+                    s_row.insert(s_row.end(), atoi(&i), ' ');
                 }
                 else
                 {
-                    v_row.push_back(i);
+                    s_row.push_back(i);
                 }
             }
-            return v_row;
+            return s_row;
         }
 
     private:
-        //  vector<string>
-        vector<vector<char>> m_chess_set;
+        vector<string> m_chess_set;
     };
 
 public:
@@ -86,7 +80,7 @@ public:
     {
         for (size_t i = 0; i < m_row_set.size(); i++)
         {
-            const vector<char> _row = m_row_set.get_row(i);
+            const string _row = m_row_set.get_row(i);
             for (size_t j = 0; j < _row.size(); j++)
             {
                 // P(Pawn, Soldier), N(Knight/Horse), B(Bishop/Elephant), R(Rook/Car), Q(Queen), K(King)
