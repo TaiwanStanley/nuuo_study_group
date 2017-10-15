@@ -1,11 +1,226 @@
 #include <iostream>
+#include <sstream>
 #include <string>
-
+#include <vector>
+#include <cctype>
+#include <stdexcept>
+#include <stdlib.h> 
 using namespace std;
+
+class chessboard
+{
+    const int EAST = 1;
+    const int WEST = -1;
+    const int SOUTH = 1;
+    const int NORTH = -1;
+
+public:
+    class chess_row_set
+    {
+    public:
+        void insert_row(const string &row)
+        {
+            m_chess_set.push_back(parse_row(row));
+        }
+
+        void insert_row(const vector<char> &row)
+        {
+            m_chess_set.push_back(row);
+        }
+
+        const vector<char> &get_row(size_t x) const
+        {
+            return m_chess_set.at(x);
+        }
+
+        size_t size() const
+        {
+            return m_chess_set.size();
+        }
+
+    private:
+        vector<char> parse_row(const string &row)
+        {
+            vector<char> v_row;
+            for (const auto i : row)
+            {
+                if (isdigit(i))
+                {
+                    v_row.insert(v_row.end(), atoi(&i), ' ');
+                }
+                else
+                {
+                    v_row.push_back(i);
+                }
+            }
+            return v_row;
+        }
+
+    private:
+        //  vector<string>
+        vector<vector<char>> m_chess_set;
+    };
+
+public:
+    chessboard(const chess_row_set& _row_set, size_t x, size_t y) :
+        m_row_set(_row_set),
+        m_x_bouudary(x),
+        m_y_boundary(y),
+        m_has_threatening(x, vector<bool>(y, false))
+    {
+    }
+
+    virtual ~chessboard(){}
+    size_t get_number_of_safe_squares()
+    {
+        cal_the_step();
+        size_t safe_squares = 0;
+        for (size_t i = 0; i < m_has_threatening.size(); i++)
+        {
+            safe_squares += count(m_has_threatening.at(i).begin(), m_has_threatening.at(i).end(), false);
+        }
+        return safe_squares;
+    }
+    
+    void cal_the_step()
+    {
+        for (size_t i = 0; i < m_row_set.size(); i++)
+        {
+            const vector<char> _row = m_row_set.get_row(i);
+            for (size_t j = 0; j < _row.size(); j++)
+            {
+                // P(Pawn, Soldier), N(Knight/Horse), B(Bishop/Elephant), R(Rook/Car), Q(Queen), K(King)
+                try
+                {
+                    switch (_row.at(j))
+                    {
+                    case 'p':
+                        set_and_check_boundary(i + NORTH, j + EAST);
+                        set_and_check_boundary(i + SOUTH, j + EAST);
+                        m_has_threatening.at(i).at(j) = true;
+                        break;
+                    case 'P':
+                        set_and_check_boundary(i + NORTH, j + WEST);
+                        set_and_check_boundary(i + SOUTH, j + WEST);
+                        m_has_threatening.at(i).at(j) = true;
+                        break;
+                    case 'n': case 'N':
+                        knight_movement(i, j);
+                        m_has_threatening.at(i).at(j) = true;
+                        break;
+                    case 'b': case 'B':
+                        bishop_movement(_row.size(), i, j);
+                        m_has_threatening.at(i).at(j) = true;
+                        break;
+                    case 'r': case 'R':
+                        rook_movement(_row.size(), i, j);
+                        m_has_threatening.at(i).at(j) = true;
+                        break;
+                    case 'q': case 'Q':
+                        bishop_movement(_row.size(), i, j);
+                        rook_movement(_row.size(), i, j);
+                        m_has_threatening.at(i).at(j) = true;
+                        break;
+                    case'k': case 'K':
+                        king_movement(i, j);
+                        m_has_threatening.at(i).at(j) = true;
+                        break;
+                    default:
+                        break;
+                    }
+                }
+                catch (const out_of_range oor)
+                {
+                    cout << "error" << endl;
+                }
+            }
+        }
+    }
+
+private:
+    void knight_movement(size_t i, size_t j)
+    {
+        set_and_check_boundary(i + NORTH * 2, j + WEST);
+        set_and_check_boundary(i + NORTH * 2, j + EAST);
+        set_and_check_boundary(i + NORTH, j + WEST * 2);
+        set_and_check_boundary(i + NORTH, j + EAST * 2);
+        set_and_check_boundary(i + SOUTH, j + WEST * 2);
+        set_and_check_boundary(i + SOUTH, j + EAST * 2);
+        set_and_check_boundary(i + SOUTH * 2, j + WEST);
+        set_and_check_boundary(i + SOUTH * 2, j + EAST);
+    }
+
+    void king_movement(size_t i, size_t j)
+    {
+        set_and_check_boundary(i + NORTH, j + WEST);
+        set_and_check_boundary(i + NORTH, j);
+        set_and_check_boundary(i + NORTH, j + EAST);
+        set_and_check_boundary(i, j + WEST);
+        set_and_check_boundary(i, j + EAST);
+        set_and_check_boundary(i + SOUTH, j + WEST);
+        set_and_check_boundary(i + SOUTH, j);
+        set_and_check_boundary(i + SOUTH, j + EAST);
+    }
+    void rook_movement(size_t row_size, size_t i, size_t j)
+    {
+        for (size_t p = 0; p < row_size; p++)
+        {
+            set_and_check_boundary(i, p);
+            set_and_check_boundary(p, j);
+        }
+    }
+
+    void bishop_movement(size_t row_size, size_t i, size_t j)
+    {
+        size_t times = 1;
+        // go to east
+        for (size_t p = j + 1; p < row_size; p++)
+        {
+            set_and_check_boundary(i + times, p);
+            set_and_check_boundary(i - times, p);
+            times++;
+        }
+        times = 1;
+        // go to west
+        for (size_t p = j - 1; p < 0; p--)
+        {
+            set_and_check_boundary(i + times, p);
+            set_and_check_boundary(i - times, p);
+            times++;
+        }
+    }
+
+    void set_and_check_boundary(size_t x, size_t y)
+    {
+        try
+        {
+            m_has_threatening.at(x).at(y) = true;
+        }
+        catch (const out_of_range oor)
+        {
+        }
+    }
+
+private:
+    const chess_row_set m_row_set;
+    const size_t m_x_bouudary;
+    const size_t m_y_boundary;
+    vector<vector<bool>> m_has_threatening;
+};
 
 void testcases(const string &fen_str)
 {
+    istringstream iss(fen_str);
 
+    string row;
+    chessboard::chess_row_set row_set;
+    while (getline(iss, row, '/'))
+    {
+        row_set.insert_row(row);
+    }
+
+    chessboard chess_game(row_set, 8, 8);
+    cout << chess_game.get_number_of_safe_squares() << endl;
 }
 
 int main()
