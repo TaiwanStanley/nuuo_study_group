@@ -103,16 +103,16 @@ public:
                         m_has_threatening.at(i).at(j) = true;
                         break;
                     case 'b': case 'B':
-                        bishop_movement(_row.size(), i, j);
+                        bishop_movement(i, j);
                         m_has_threatening.at(i).at(j) = true;
                         break;
                     case 'r': case 'R':
-                        rook_movement(_row.size(), i, j);
+                        rook_movement(i, j);
                         m_has_threatening.at(i).at(j) = true;
                         break;
                     case 'q': case 'Q':
-                        bishop_movement(_row.size(), i, j);
-                        rook_movement(_row.size(), i, j);
+                        bishop_movement(i, j);
+                        rook_movement(i, j);
                         m_has_threatening.at(i).at(j) = true;
                         break;
                     case'k': case 'K':
@@ -154,30 +154,78 @@ private:
         set_and_check_boundary(i + SOUTH, j);
         set_and_check_boundary(i + SOUTH, j + EAST);
     }
-    void rook_movement(size_t row_size, size_t i, size_t j)
+    void rook_movement(size_t i, size_t j)
     {
-        for (size_t p = 0; p < row_size; p++)
+        // go to east 
+        for (size_t p = j + 1; p < m_x_bouudary; p++)
         {
+            if (has_chess(i, p))
+                break;
             set_and_check_boundary(i, p);
+        }
+
+        // go to west 
+        for (int p = j - 1; p >= 0; p--)
+        {
+            if (has_chess(i, p))
+                break;
+            set_and_check_boundary(i, p);
+        }
+
+        // go to south
+        for (size_t p = i + 1; p < m_y_boundary; p++)
+        {
+            if (has_chess(p, j))
+                break;
+            set_and_check_boundary(p, j);
+        }
+
+        // go to north
+        for (int p = i - 1; p >= 0; p--)
+        {
+            if (has_chess(p, j))
+                break;
             set_and_check_boundary(p, j);
         }
     }
 
-    void bishop_movement(size_t row_size, size_t i, size_t j)
+    void bishop_movement(size_t i, size_t j)
     {
+        // go to northeast
         size_t times = 1;
-        // go to east
-        for (size_t p = j + 1; p < row_size; p++)
+        for (size_t p = j + 1; p < m_x_bouudary; p++)
         {
+            if (has_chess(i + times, p))
+                break;
             set_and_check_boundary(i + times, p);
+            times++;
+        }
+        // goto southeast
+        times = 1;
+        for (size_t p = j + 1; p < m_x_bouudary; p++)
+        {
+            if (has_chess(i - times, p))
+                break;
             set_and_check_boundary(i - times, p);
             times++;
         }
+
+        // go to northwest
         times = 1;
-        // go to west
-        for (size_t p = j - 1; p < 0; p--)
+        for (int p = j - 1; p >= 0; p--)
         {
+            if (has_chess(i + times, p))
+                break;
             set_and_check_boundary(i + times, p);
+            times++;
+        }
+
+        // go to southwest
+        times = 1;
+        for (int p = j - 1; p >= 0; p--)
+        {
+            if (has_chess(i - times, p))
+                break;
             set_and_check_boundary(i - times, p);
             times++;
         }
@@ -191,6 +239,18 @@ private:
         }
         catch (const out_of_range oor)
         {
+        }
+    }
+
+    bool has_chess(size_t x, size_t y)
+    {
+        try
+        {
+            return m_row_set.get_row(x).at(y) != ' ';
+        }
+        catch (const out_of_range oor)
+        {
+            return false;
         }
     }
 
