@@ -11,11 +11,6 @@ using namespace std;
 class chessboard
 {
 public:
-    const int GOTO_EAST = 1;
-    const int GOTO_WEST = -1;
-    const int GOTO_SOUTH = 1;
-    const int GOTO_NORTH = -1;
-
     enum MOVING_METHOD
     {
         STEP,
@@ -33,6 +28,7 @@ public:
         SOUTHWEST,
         WEST
     };
+
 public:
     class chess_row_set
     {
@@ -146,24 +142,28 @@ public:
             return *this;
         }
 
-        void go_to_north()
+        size_t go_to_north(size_t step = 1)
         {
-            m_y--;
+            m_y -= step;
+            return m_y;
         }
 
-        void go_to_south()
+        size_t go_to_south(size_t step = 1)
         {
-            m_y++;
+            m_y += step;
+            return m_y;
         }
 
-        void go_to_east()
+        size_t go_to_east(size_t step = 1)
         {
-            m_x++;
+            m_x += step;
+            return m_x;
         }
 
-        void go_to_west()
+        size_t go_to_west(size_t step = 1)
         {
-            m_x--;
+            m_x -= step;
+            return m_x;
         }
 
     private:
@@ -290,15 +290,15 @@ public:
 private:
     void knight_movement(chess &piece, size_t x, size_t y)
     {
-        piece.move(*this, x + GOTO_WEST, y + GOTO_NORTH * 2).set(x, y);
-        piece.move(*this, x + GOTO_WEST, y + GOTO_NORTH * 2).set(x, y);
-        piece.move(*this, x + GOTO_EAST, y + GOTO_NORTH * 2).set(x, y);
-        piece.move(*this, x + GOTO_WEST * 2, y + GOTO_NORTH).set(x, y);
-        piece.move(*this, x + GOTO_EAST * 2, y + GOTO_NORTH).set(x, y);
-        piece.move(*this, x + GOTO_WEST * 2, y + GOTO_SOUTH).set(x, y);
-        piece.move(*this, x + GOTO_EAST * 2, y + GOTO_SOUTH).set(x, y);
-        piece.move(*this, x + GOTO_WEST, y + GOTO_SOUTH * 2).set(x, y);
-        piece.move(*this, x + GOTO_EAST, y + GOTO_SOUTH * 2).set(x, y);
+        piece.move(*this, piece.go_to_west(), piece.go_to_north(2)).set(x, y);
+        piece.move(*this, piece.go_to_west(), piece.go_to_north(2)).set(x, y);
+        piece.move(*this, piece.go_to_east(), piece.go_to_north(2)).set(x, y);
+        piece.move(*this, piece.go_to_west(2), piece.go_to_north()).set(x, y);
+        piece.move(*this, piece.go_to_east(2), piece.go_to_north()).set(x, y);
+        piece.move(*this, piece.go_to_west(2), piece.go_to_south()).set(x, y);
+        piece.move(*this, piece.go_to_east(2), piece.go_to_south()).set(x, y);
+        piece.move(*this, piece.go_to_west(), piece.go_to_south(2)).set(x, y);
+        piece.move(*this, piece.go_to_east(), piece.go_to_south(2)).set(x, y);
     }
 
 private:
