@@ -10,11 +10,28 @@ using namespace std;
 
 class chessboard
 {
-    const int EAST = 1;
-    const int WEST = -1;
-    const int SOUTH = 1;
-    const int NORTH = -1;
+    const int GOTO_EAST = 1;
+    const int GOTO_WEST = -1;
+    const int GOTO_SOUTH = 1;
+    const int GOTO_NORTH = -1;
 
+    enum MOVING_METHOD
+    {
+        STEP,
+        CONTINUE
+    };
+
+    enum MOVING_DIRECTION
+    {
+        NORTHWEST = 0,
+        NORTH,
+        NORTHEAST,
+        EAST,
+        SOUTHEAST,
+        SOUTH,
+        SOUTHWEST,
+        WEST
+    };
 public:
     class chess_row_set
     {
@@ -76,49 +93,75 @@ public:
         }
         return safe_squares;
     }
-    
+
     void cal_the_step()
     {
-        for (size_t i = 0; i < m_row_set.size(); i++)
+        for (size_t y = 0; y < m_row_set.size(); y++)
         {
-            const string _row = m_row_set.get_row(i);
-            for (size_t j = 0; j < _row.size(); j++)
+            const string _row = m_row_set.get_row(y);
+            for (size_t x = 0; x < _row.size(); x++)
             {
                 // P(Pawn, Soldier), N(Knight/Horse), B(Bishop/Elephant), R(Rook/Car), Q(Queen), K(King)
                 try
                 {
-                    switch (_row.at(j))
+                    switch (_row.at(x))
                     {
                     case 'p':
-                        set_and_check_boundary(i + SOUTH, j + EAST);
-                        set_and_check_boundary(i + SOUTH, j + WEST);
-                        m_has_threatening.at(i).at(j) = true;
+                        move(x, y, MOVING_METHOD::STEP, MOVING_DIRECTION::SOUTHEAST);
+                        move(x, y, MOVING_METHOD::STEP, MOVING_DIRECTION::SOUTHWEST);
+                        set_and_check_boundary(y, x);
+
                         break;
                     case 'P':
-                        set_and_check_boundary(i + NORTH, j + EAST);
-                        set_and_check_boundary(i + NORTH, j + WEST);
-                        m_has_threatening.at(i).at(j) = true;
+                        move(x, y, MOVING_METHOD::STEP, MOVING_DIRECTION::NORTHEAST);
+                        move(x, y, MOVING_METHOD::STEP, MOVING_DIRECTION::NORTHWEST);
+                        set_and_check_boundary(y, x);
+
                         break;
                     case 'n': case 'N':
-                        knight_movement(i, j);
-                        m_has_threatening.at(i).at(j) = true;
+                        knight_movement(y, x);
+                        set_and_check_boundary(y, x);
+
                         break;
                     case 'b': case 'B':
-                        bishop_movement(i, j);
-                        m_has_threatening.at(i).at(j) = true;
+                        move(x, y, MOVING_METHOD::CONTINUE, MOVING_DIRECTION::SOUTHEAST);
+                        move(x, y, MOVING_METHOD::CONTINUE, MOVING_DIRECTION::SOUTHWEST);
+                        move(x, y, MOVING_METHOD::CONTINUE, MOVING_DIRECTION::NORTHEAST);
+                        move(x, y, MOVING_METHOD::CONTINUE, MOVING_DIRECTION::NORTHWEST);
+                        set_and_check_boundary(y, x);
+
                         break;
                     case 'r': case 'R':
-                        rook_movement(i, j);
-                        m_has_threatening.at(i).at(j) = true;
+                        move(x, y, MOVING_METHOD::CONTINUE, MOVING_DIRECTION::NORTH);
+                        move(x, y, MOVING_METHOD::CONTINUE, MOVING_DIRECTION::EAST);
+                        move(x, y, MOVING_METHOD::CONTINUE, MOVING_DIRECTION::SOUTH);
+                        move(x, y, MOVING_METHOD::CONTINUE, MOVING_DIRECTION::WEST);
+                        set_and_check_boundary(y, x);
+
                         break;
                     case 'q': case 'Q':
-                        bishop_movement(i, j);
-                        rook_movement(i, j);
-                        m_has_threatening.at(i).at(j) = true;
+                        move(x, y, MOVING_METHOD::CONTINUE, MOVING_DIRECTION::SOUTHEAST);
+                        move(x, y, MOVING_METHOD::CONTINUE, MOVING_DIRECTION::SOUTHWEST);
+                        move(x, y, MOVING_METHOD::CONTINUE, MOVING_DIRECTION::NORTHEAST);
+                        move(x, y, MOVING_METHOD::CONTINUE, MOVING_DIRECTION::NORTHWEST);
+                        move(x, y, MOVING_METHOD::CONTINUE, MOVING_DIRECTION::NORTH);
+                        move(x, y, MOVING_METHOD::CONTINUE, MOVING_DIRECTION::EAST);
+                        move(x, y, MOVING_METHOD::CONTINUE, MOVING_DIRECTION::SOUTH);
+                        move(x, y, MOVING_METHOD::CONTINUE, MOVING_DIRECTION::WEST);
+                        set_and_check_boundary(y, x);
+
                         break;
                     case'k': case 'K':
-                        king_movement(i, j);
-                        m_has_threatening.at(i).at(j) = true;
+                        move(x, y, MOVING_METHOD::STEP, MOVING_DIRECTION::SOUTHEAST);
+                        move(x, y, MOVING_METHOD::STEP, MOVING_DIRECTION::SOUTHWEST);
+                        move(x, y, MOVING_METHOD::STEP, MOVING_DIRECTION::NORTHEAST);
+                        move(x, y, MOVING_METHOD::STEP, MOVING_DIRECTION::NORTHWEST);
+                        move(x, y, MOVING_METHOD::STEP, MOVING_DIRECTION::NORTH);
+                        move(x, y, MOVING_METHOD::STEP, MOVING_DIRECTION::EAST);
+                        move(x, y, MOVING_METHOD::STEP, MOVING_DIRECTION::SOUTH);
+                        move(x, y, MOVING_METHOD::STEP, MOVING_DIRECTION::WEST);
+                        set_and_check_boundary(y, x);
+
                         break;
                     default:
                         break;
@@ -134,125 +177,87 @@ public:
 private:
     void knight_movement(size_t i, size_t j)
     {
-        set_and_check_boundary(i + NORTH * 2, j + WEST);
-        set_and_check_boundary(i + NORTH * 2, j + EAST);
-        set_and_check_boundary(i + NORTH, j + WEST * 2);
-        set_and_check_boundary(i + NORTH, j + EAST * 2);
-        set_and_check_boundary(i + SOUTH, j + WEST * 2);
-        set_and_check_boundary(i + SOUTH, j + EAST * 2);
-        set_and_check_boundary(i + SOUTH * 2, j + WEST);
-        set_and_check_boundary(i + SOUTH * 2, j + EAST);
+        set_and_check_boundary(i + GOTO_NORTH * 2, j + GOTO_WEST);
+        set_and_check_boundary(i + GOTO_NORTH * 2, j + GOTO_EAST);
+        set_and_check_boundary(i + GOTO_NORTH, j + GOTO_WEST * 2);
+        set_and_check_boundary(i + GOTO_NORTH, j + GOTO_EAST * 2);
+        set_and_check_boundary(i + GOTO_SOUTH, j + GOTO_WEST * 2);
+        set_and_check_boundary(i + GOTO_SOUTH, j + GOTO_EAST * 2);
+        set_and_check_boundary(i + GOTO_SOUTH * 2, j + GOTO_WEST);
+        set_and_check_boundary(i + GOTO_SOUTH * 2, j + GOTO_EAST);
     }
 
-    void king_movement(size_t i, size_t j)
-    {
-        set_and_check_boundary(i + NORTH, j + WEST);
-        set_and_check_boundary(i + NORTH, j);
-        set_and_check_boundary(i + NORTH, j + EAST);
-        set_and_check_boundary(i, j + WEST);
-        set_and_check_boundary(i, j + EAST);
-        set_and_check_boundary(i + SOUTH, j + WEST);
-        set_and_check_boundary(i + SOUTH, j);
-        set_and_check_boundary(i + SOUTH, j + EAST);
-    }
-    void rook_movement(size_t i, size_t j)
-    {
-        // go to east 
-        for (size_t p = j + 1; p < m_x_bouudary; p++)
-        {
-            if (has_chess(i, p))
-                break;
-            set_and_check_boundary(i, p);
-        }
-
-        // go to west 
-        for (int p = j - 1; p >= 0; p--)
-        {
-            if (has_chess(i, p))
-                break;
-            set_and_check_boundary(i, p);
-        }
-
-        // go to south
-        for (size_t p = i + 1; p < m_y_boundary; p++)
-        {
-            if (has_chess(p, j))
-                break;
-            set_and_check_boundary(p, j);
-        }
-
-        // go to north
-        for (int p = i - 1; p >= 0; p--)
-        {
-            if (has_chess(p, j))
-                break;
-            set_and_check_boundary(p, j);
-        }
-    }
-
-    void bishop_movement(size_t i, size_t j)
-    {
-        // go to northeast
-        size_t times = 1;
-        for (size_t p = j + 1; p < m_x_bouudary; p++)
-        {
-            if (has_chess(i + times, p))
-                break;
-            set_and_check_boundary(i + times, p);
-            times++;
-        }
-        // goto southeast
-        times = 1;
-        for (size_t p = j + 1; p < m_x_bouudary; p++)
-        {
-            if (has_chess(i - times, p))
-                break;
-            set_and_check_boundary(i - times, p);
-            times++;
-        }
-
-        // go to northwest
-        times = 1;
-        for (int p = j - 1; p >= 0; p--)
-        {
-            if (has_chess(i + times, p))
-                break;
-            set_and_check_boundary(i + times, p);
-            times++;
-        }
-
-        // go to southwest
-        times = 1;
-        for (int p = j - 1; p >= 0; p--)
-        {
-            if (has_chess(i - times, p))
-                break;
-            set_and_check_boundary(i - times, p);
-            times++;
-        }
-    }
-
-    void set_and_check_boundary(size_t x, size_t y)
+    void set_and_check_boundary(size_t y, size_t x)
     {
         try
         {
-            m_has_threatening.at(x).at(y) = true;
+            m_has_threatening.at(y).at(x) = true;
         }
         catch (const out_of_range oor)
         {
         }
     }
 
-    bool has_chess(size_t x, size_t y)
+    void move(size_t x, size_t y, MOVING_METHOD mm, MOVING_DIRECTION md)
+    {
+        if (x >= m_x_bouudary || y >= m_y_boundary)
+        {
+            return;
+        }
+
+        switch (md)
+        {
+        case chessboard::NORTHWEST:
+            x += GOTO_WEST;
+            y += GOTO_NORTH;
+            break;
+        case chessboard::NORTH:
+            y += GOTO_NORTH;
+            break;
+        case chessboard::NORTHEAST:
+            x += GOTO_EAST;
+            y += GOTO_NORTH;
+            break;
+        case chessboard::EAST:
+            x += GOTO_EAST;
+            break;
+        case chessboard::SOUTHEAST:
+            x += GOTO_EAST;
+            y += GOTO_SOUTH;
+            break;
+        case chessboard::SOUTH:
+            y += GOTO_SOUTH;
+            break;
+        case chessboard::SOUTHWEST:
+            x += GOTO_WEST;
+            y += GOTO_SOUTH;
+            break;
+        case chessboard::WEST:
+            x += GOTO_WEST;
+            break;
+        default:
+            break;
+        }
+
+        if (has_chess(y, x)) return;
+
+        set_and_check_boundary(y, x);
+        if ( mm == MOVING_METHOD::CONTINUE)
+        {
+            move(x, y, mm, md);
+        }
+    }
+
+    bool has_chess(size_t y, size_t x)
     {
         try
         {
-            return m_row_set.get_row(x).at(y) != ' ';
+            return m_row_set.get_row(y).at(x) != ' ';
         }
         catch (const out_of_range oor)
         {
-            return false;
         }
+        return false;
     }
 
 private:
