@@ -89,13 +89,13 @@ public:
                     switch (_row.at(j))
                     {
                     case 'p':
-                        set_and_check_boundary(i + NORTH, j + EAST);
                         set_and_check_boundary(i + SOUTH, j + EAST);
+                        set_and_check_boundary(i + SOUTH, j + WEST);
                         m_has_threatening.at(i).at(j) = true;
                         break;
                     case 'P':
+                        set_and_check_boundary(i + NORTH, j + EAST);
                         set_and_check_boundary(i + NORTH, j + WEST);
-                        set_and_check_boundary(i + SOUTH, j + WEST);
                         m_has_threatening.at(i).at(j) = true;
                         break;
                     case 'n': case 'N':
