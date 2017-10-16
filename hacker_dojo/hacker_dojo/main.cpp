@@ -5,6 +5,7 @@
 #include <cctype>
 #include <stdexcept>
 #include <stdlib.h> 
+#include <algorithm>
 using namespace std;
 
 class chessboard
