@@ -109,35 +109,30 @@ public:
                     case 'p':
                         move(x, y, MOVING_METHOD::STEP, MOVING_DIRECTION::SOUTHEAST);
                         move(x, y, MOVING_METHOD::STEP, MOVING_DIRECTION::SOUTHWEST);
-                        set_and_check_boundary(y, x);
-
+                        set_and_check_boundary(x, y);
                         break;
                     case 'P':
                         move(x, y, MOVING_METHOD::STEP, MOVING_DIRECTION::NORTHEAST);
                         move(x, y, MOVING_METHOD::STEP, MOVING_DIRECTION::NORTHWEST);
-                        set_and_check_boundary(y, x);
-
+                        set_and_check_boundary(x, y);
                         break;
                     case 'n': case 'N':
                         knight_movement(y, x);
-                        set_and_check_boundary(y, x);
-
+                        set_and_check_boundary(x, y);
                         break;
                     case 'b': case 'B':
                         move(x, y, MOVING_METHOD::CONTINUE, MOVING_DIRECTION::SOUTHEAST);
                         move(x, y, MOVING_METHOD::CONTINUE, MOVING_DIRECTION::SOUTHWEST);
                         move(x, y, MOVING_METHOD::CONTINUE, MOVING_DIRECTION::NORTHEAST);
                         move(x, y, MOVING_METHOD::CONTINUE, MOVING_DIRECTION::NORTHWEST);
-                        set_and_check_boundary(y, x);
-
+                        set_and_check_boundary(x, y);
                         break;
                     case 'r': case 'R':
                         move(x, y, MOVING_METHOD::CONTINUE, MOVING_DIRECTION::NORTH);
                         move(x, y, MOVING_METHOD::CONTINUE, MOVING_DIRECTION::EAST);
                         move(x, y, MOVING_METHOD::CONTINUE, MOVING_DIRECTION::SOUTH);
                         move(x, y, MOVING_METHOD::CONTINUE, MOVING_DIRECTION::WEST);
-                        set_and_check_boundary(y, x);
-
+                        set_and_check_boundary(x, y);
                         break;
                     case 'q': case 'Q':
                         move(x, y, MOVING_METHOD::CONTINUE, MOVING_DIRECTION::SOUTHEAST);
@@ -148,8 +143,7 @@ public:
                         move(x, y, MOVING_METHOD::CONTINUE, MOVING_DIRECTION::EAST);
                         move(x, y, MOVING_METHOD::CONTINUE, MOVING_DIRECTION::SOUTH);
                         move(x, y, MOVING_METHOD::CONTINUE, MOVING_DIRECTION::WEST);
-                        set_and_check_boundary(y, x);
-
+                        set_and_check_boundary(x, y);
                         break;
                     case'k': case 'K':
                         move(x, y, MOVING_METHOD::STEP, MOVING_DIRECTION::SOUTHEAST);
@@ -160,8 +154,7 @@ public:
                         move(x, y, MOVING_METHOD::STEP, MOVING_DIRECTION::EAST);
                         move(x, y, MOVING_METHOD::STEP, MOVING_DIRECTION::SOUTH);
                         move(x, y, MOVING_METHOD::STEP, MOVING_DIRECTION::WEST);
-                        set_and_check_boundary(y, x);
-
+                        set_and_check_boundary(x, y);
                         break;
                     default:
                         break;
@@ -177,17 +170,17 @@ public:
 private:
     void knight_movement(size_t i, size_t j)
     {
-        set_and_check_boundary(i + GOTO_NORTH * 2, j + GOTO_WEST);
-        set_and_check_boundary(i + GOTO_NORTH * 2, j + GOTO_EAST);
-        set_and_check_boundary(i + GOTO_NORTH, j + GOTO_WEST * 2);
-        set_and_check_boundary(i + GOTO_NORTH, j + GOTO_EAST * 2);
-        set_and_check_boundary(i + GOTO_SOUTH, j + GOTO_WEST * 2);
-        set_and_check_boundary(i + GOTO_SOUTH, j + GOTO_EAST * 2);
-        set_and_check_boundary(i + GOTO_SOUTH * 2, j + GOTO_WEST);
-        set_and_check_boundary(i + GOTO_SOUTH * 2, j + GOTO_EAST);
+        set_and_check_boundary(j + GOTO_WEST, i + GOTO_NORTH * 2);
+        set_and_check_boundary(j + GOTO_EAST, i + GOTO_NORTH * 2);
+        set_and_check_boundary(j + GOTO_WEST * 2, i + GOTO_NORTH);
+        set_and_check_boundary(j + GOTO_EAST * 2, i + GOTO_NORTH);
+        set_and_check_boundary(j + GOTO_WEST * 2, i + GOTO_SOUTH);
+        set_and_check_boundary(j + GOTO_EAST * 2, i + GOTO_SOUTH);
+        set_and_check_boundary(j + GOTO_WEST, i + GOTO_SOUTH * 2);
+        set_and_check_boundary(j + GOTO_EAST, i + GOTO_SOUTH * 2);
     }
 
-    void set_and_check_boundary(size_t y, size_t x)
+    void set_and_check_boundary(size_t x, size_t y)
     {
         try
         {
@@ -204,6 +197,7 @@ private:
         {
             return;
         }
+        set_and_check_boundary(x, y);
 
         switch (md)
         {
@@ -239,16 +233,16 @@ private:
             break;
         }
 
-        if (has_chess(y, x)) return;
+        if (has_chess(x, y)) return;
 
-        set_and_check_boundary(y, x);
+        set_and_check_boundary(x, y);
         if ( mm == MOVING_METHOD::CONTINUE)
         {
             move(x, y, mm, md);
         }
     }
 
-    bool has_chess(size_t y, size_t x)
+    bool has_chess(size_t x, size_t y)
     {
         try
         {
