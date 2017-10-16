@@ -10,6 +10,7 @@ using namespace std;
 
 class chessboard
 {
+public:
     const int GOTO_EAST = 1;
     const int GOTO_WEST = -1;
     const int GOTO_SOUTH = 1;
@@ -73,10 +74,107 @@ public:
         vector<string> m_chess_set;
     };
 
+    class chess
+    {
+    public:
+        chess(){}
+        chess(size_t _x, size_t _y) : m_x(_x), m_y(_y){}
+        virtual ~chess(){}
+
+        void set(size_t _x, size_t _y)
+        {
+            m_x = _x;
+            m_y = _y;
+        }
+
+        chess& move(chessboard &board, size_t _x, size_t _y)
+        {
+            m_x = _x;
+            m_y = _y;
+            board.set_and_check_boundary(m_x, m_y);
+            return *this;
+        }
+
+        chess& move(chessboard &board, MOVING_METHOD mm, MOVING_DIRECTION md)
+        {
+            if (m_x >= board.board_width() || m_y >= board.board_length())
+            {
+                return *this;
+            }
+
+            switch (md)
+            {
+            case chessboard::NORTHWEST:
+                go_to_west();
+                go_to_north();
+                break;
+            case chessboard::NORTH:
+                go_to_north();
+                break;
+            case chessboard::NORTHEAST:
+                go_to_east();
+                go_to_north();
+                break;
+            case chessboard::EAST:
+                go_to_east();
+                break;
+            case chessboard::SOUTHEAST:
+                go_to_east();
+                go_to_south();
+                break;
+            case chessboard::SOUTH:
+                go_to_south();
+                break;
+            case chessboard::SOUTHWEST:
+                go_to_west();
+                go_to_south();
+                break;
+            case chessboard::WEST:
+                go_to_west();
+                break;
+            default:
+                break;
+            }
+
+            if (board.has_chess(m_x, m_y)) return *this;
+
+            board.set_and_check_boundary(m_x, m_y);
+            if (mm == MOVING_METHOD::CONTINUE)
+            {
+                move(board, mm, md);
+            }
+            return *this;
+        }
+
+        void go_to_north()
+        {
+            m_y--;
+        }
+
+        void go_to_south()
+        {
+            m_y++;
+        }
+
+        void go_to_east()
+        {
+            m_x++;
+        }
+
+        void go_to_west()
+        {
+            m_x--;
+        }
+
+    private:
+        size_t m_x;
+        size_t m_y;
+    };
+
 public:
     chessboard(const chess_row_set& _row_set, size_t x, size_t y) :
         m_row_set(_row_set),
-        m_x_bouudary(x),
+        m_x_boundary(x),
         m_y_boundary(y),
         m_has_threatening(x, vector<bool>(y, false))
     {
@@ -96,62 +194,64 @@ public:
 
     void cal_the_step()
     {
+        chess piece;
         for (size_t y = 0; y < m_row_set.size(); y++)
         {
             const string _row = m_row_set.get_row(y);
             for (size_t x = 0; x < _row.size(); x++)
             {
                 // P(Pawn, Soldier), N(Knight/Horse), B(Bishop/Elephant), R(Rook/Car), Q(Queen), K(King)
+                piece.set(x, y);
                 switch (_row.at(x))
                 {
                 case 'p':
-                    move(x, y, MOVING_METHOD::STEP, MOVING_DIRECTION::SOUTHEAST);
-                    move(x, y, MOVING_METHOD::STEP, MOVING_DIRECTION::SOUTHWEST);
+                    piece.move(*this, MOVING_METHOD::STEP, MOVING_DIRECTION::SOUTHEAST).set(x, y);
+                    piece.move(*this, MOVING_METHOD::STEP, MOVING_DIRECTION::SOUTHWEST).set(x, y);
                     set_and_check_boundary(x, y);
                     break;
                 case 'P':
-                    move(x, y, MOVING_METHOD::STEP, MOVING_DIRECTION::NORTHEAST);
-                    move(x, y, MOVING_METHOD::STEP, MOVING_DIRECTION::NORTHWEST);
+                    piece.move(*this, MOVING_METHOD::STEP, MOVING_DIRECTION::NORTHEAST).set(x, y);
+                    piece.move(*this, MOVING_METHOD::STEP, MOVING_DIRECTION::NORTHWEST).set(x, y);
                     set_and_check_boundary(x, y);
                     break;
                 case 'n': case 'N':
-                    knight_movement(y, x);
+                    knight_movement(piece, x, y);
                     set_and_check_boundary(x, y);
                     break;
                 case 'b': case 'B':
-                    move(x, y, MOVING_METHOD::CONTINUE, MOVING_DIRECTION::SOUTHEAST);
-                    move(x, y, MOVING_METHOD::CONTINUE, MOVING_DIRECTION::SOUTHWEST);
-                    move(x, y, MOVING_METHOD::CONTINUE, MOVING_DIRECTION::NORTHEAST);
-                    move(x, y, MOVING_METHOD::CONTINUE, MOVING_DIRECTION::NORTHWEST);
+                    piece.move(*this, MOVING_METHOD::CONTINUE, MOVING_DIRECTION::SOUTHEAST).set(x, y);
+                    piece.move(*this, MOVING_METHOD::CONTINUE, MOVING_DIRECTION::SOUTHWEST).set(x, y);
+                    piece.move(*this, MOVING_METHOD::CONTINUE, MOVING_DIRECTION::NORTHEAST).set(x, y);
+                    piece.move(*this, MOVING_METHOD::CONTINUE, MOVING_DIRECTION::NORTHWEST).set(x, y);
                     set_and_check_boundary(x, y);
                     break;
                 case 'r': case 'R':
-                    move(x, y, MOVING_METHOD::CONTINUE, MOVING_DIRECTION::NORTH);
-                    move(x, y, MOVING_METHOD::CONTINUE, MOVING_DIRECTION::EAST);
-                    move(x, y, MOVING_METHOD::CONTINUE, MOVING_DIRECTION::SOUTH);
-                    move(x, y, MOVING_METHOD::CONTINUE, MOVING_DIRECTION::WEST);
+                    piece.move(*this, MOVING_METHOD::CONTINUE, MOVING_DIRECTION::NORTH).set(x, y);
+                    piece.move(*this, MOVING_METHOD::CONTINUE, MOVING_DIRECTION::EAST).set(x, y);
+                    piece.move(*this, MOVING_METHOD::CONTINUE, MOVING_DIRECTION::SOUTH).set(x, y);
+                    piece.move(*this, MOVING_METHOD::CONTINUE, MOVING_DIRECTION::WEST).set(x, y);
                     set_and_check_boundary(x, y);
                     break;
                 case 'q': case 'Q':
-                    move(x, y, MOVING_METHOD::CONTINUE, MOVING_DIRECTION::SOUTHEAST);
-                    move(x, y, MOVING_METHOD::CONTINUE, MOVING_DIRECTION::SOUTHWEST);
-                    move(x, y, MOVING_METHOD::CONTINUE, MOVING_DIRECTION::NORTHEAST);
-                    move(x, y, MOVING_METHOD::CONTINUE, MOVING_DIRECTION::NORTHWEST);
-                    move(x, y, MOVING_METHOD::CONTINUE, MOVING_DIRECTION::NORTH);
-                    move(x, y, MOVING_METHOD::CONTINUE, MOVING_DIRECTION::EAST);
-                    move(x, y, MOVING_METHOD::CONTINUE, MOVING_DIRECTION::SOUTH);
-                    move(x, y, MOVING_METHOD::CONTINUE, MOVING_DIRECTION::WEST);
+                    piece.move(*this, MOVING_METHOD::CONTINUE, MOVING_DIRECTION::SOUTHEAST).set(x, y);
+                    piece.move(*this, MOVING_METHOD::CONTINUE, MOVING_DIRECTION::SOUTHWEST).set(x, y);
+                    piece.move(*this, MOVING_METHOD::CONTINUE, MOVING_DIRECTION::NORTHEAST).set(x, y);
+                    piece.move(*this, MOVING_METHOD::CONTINUE, MOVING_DIRECTION::NORTHWEST).set(x, y);
+                    piece.move(*this, MOVING_METHOD::CONTINUE, MOVING_DIRECTION::NORTH).set(x, y);
+                    piece.move(*this, MOVING_METHOD::CONTINUE, MOVING_DIRECTION::EAST).set(x, y);
+                    piece.move(*this, MOVING_METHOD::CONTINUE, MOVING_DIRECTION::SOUTH).set(x, y);
+                    piece.move(*this, MOVING_METHOD::CONTINUE, MOVING_DIRECTION::WEST).set(x, y);
                     set_and_check_boundary(x, y);
                     break;
                 case'k': case 'K':
-                    move(x, y, MOVING_METHOD::STEP, MOVING_DIRECTION::SOUTHEAST);
-                    move(x, y, MOVING_METHOD::STEP, MOVING_DIRECTION::SOUTHWEST);
-                    move(x, y, MOVING_METHOD::STEP, MOVING_DIRECTION::NORTHEAST);
-                    move(x, y, MOVING_METHOD::STEP, MOVING_DIRECTION::NORTHWEST);
-                    move(x, y, MOVING_METHOD::STEP, MOVING_DIRECTION::NORTH);
-                    move(x, y, MOVING_METHOD::STEP, MOVING_DIRECTION::EAST);
-                    move(x, y, MOVING_METHOD::STEP, MOVING_DIRECTION::SOUTH);
-                    move(x, y, MOVING_METHOD::STEP, MOVING_DIRECTION::WEST);
+                    piece.move(*this, MOVING_METHOD::STEP, MOVING_DIRECTION::SOUTHEAST).set(x, y);
+                    piece.move(*this, MOVING_METHOD::STEP, MOVING_DIRECTION::SOUTHWEST).set(x, y);
+                    piece.move(*this, MOVING_METHOD::STEP, MOVING_DIRECTION::NORTHEAST).set(x, y);
+                    piece.move(*this, MOVING_METHOD::STEP, MOVING_DIRECTION::NORTHWEST).set(x, y);
+                    piece.move(*this, MOVING_METHOD::STEP, MOVING_DIRECTION::NORTH).set(x, y);
+                    piece.move(*this, MOVING_METHOD::STEP, MOVING_DIRECTION::EAST).set(x, y);
+                    piece.move(*this, MOVING_METHOD::STEP, MOVING_DIRECTION::SOUTH).set(x, y);
+                    piece.move(*this, MOVING_METHOD::STEP, MOVING_DIRECTION::WEST).set(x, y);
                     set_and_check_boundary(x, y);
                     break;
                 default:
@@ -159,19 +259,6 @@ public:
                 }
             }
         }
-    }
-
-private:
-    void knight_movement(size_t i, size_t j)
-    {
-        set_and_check_boundary(j + GOTO_WEST, i + GOTO_NORTH * 2);
-        set_and_check_boundary(j + GOTO_EAST, i + GOTO_NORTH * 2);
-        set_and_check_boundary(j + GOTO_WEST * 2, i + GOTO_NORTH);
-        set_and_check_boundary(j + GOTO_EAST * 2, i + GOTO_NORTH);
-        set_and_check_boundary(j + GOTO_WEST * 2, i + GOTO_SOUTH);
-        set_and_check_boundary(j + GOTO_EAST * 2, i + GOTO_SOUTH);
-        set_and_check_boundary(j + GOTO_WEST, i + GOTO_SOUTH * 2);
-        set_and_check_boundary(j + GOTO_EAST, i + GOTO_SOUTH * 2);
     }
 
     void set_and_check_boundary(size_t x, size_t y)
@@ -182,56 +269,6 @@ private:
         }
         catch (const out_of_range oor)
         {
-        }
-    }
-
-    void move(size_t x, size_t y, MOVING_METHOD mm, MOVING_DIRECTION md)
-    {
-        if (x >= m_x_bouudary || y >= m_y_boundary)
-        {
-            return;
-        }
-
-        switch (md)
-        {
-        case chessboard::NORTHWEST:
-            x += GOTO_WEST;
-            y += GOTO_NORTH;
-            break;
-        case chessboard::NORTH:
-            y += GOTO_NORTH;
-            break;
-        case chessboard::NORTHEAST:
-            x += GOTO_EAST;
-            y += GOTO_NORTH;
-            break;
-        case chessboard::EAST:
-            x += GOTO_EAST;
-            break;
-        case chessboard::SOUTHEAST:
-            x += GOTO_EAST;
-            y += GOTO_SOUTH;
-            break;
-        case chessboard::SOUTH:
-            y += GOTO_SOUTH;
-            break;
-        case chessboard::SOUTHWEST:
-            x += GOTO_WEST;
-            y += GOTO_SOUTH;
-            break;
-        case chessboard::WEST:
-            x += GOTO_WEST;
-            break;
-        default:
-            break;
-        }
-
-        if (has_chess(x, y)) return;
-
-        set_and_check_boundary(x, y);
-        if ( mm == MOVING_METHOD::CONTINUE)
-        {
-            move(x, y, mm, md);
         }
     }
 
@@ -247,9 +284,26 @@ private:
         return false;
     }
 
+    size_t board_length() const { return m_y_boundary; }
+    size_t board_width() const { return m_x_boundary; }
+
+private:
+    void knight_movement(chess &piece, size_t x, size_t y)
+    {
+        piece.move(*this, x + GOTO_WEST, y + GOTO_NORTH * 2).set(x, y);
+        piece.move(*this, x + GOTO_WEST, y + GOTO_NORTH * 2).set(x, y);
+        piece.move(*this, x + GOTO_EAST, y + GOTO_NORTH * 2).set(x, y);
+        piece.move(*this, x + GOTO_WEST * 2, y + GOTO_NORTH).set(x, y);
+        piece.move(*this, x + GOTO_EAST * 2, y + GOTO_NORTH).set(x, y);
+        piece.move(*this, x + GOTO_WEST * 2, y + GOTO_SOUTH).set(x, y);
+        piece.move(*this, x + GOTO_EAST * 2, y + GOTO_SOUTH).set(x, y);
+        piece.move(*this, x + GOTO_WEST, y + GOTO_SOUTH * 2).set(x, y);
+        piece.move(*this, x + GOTO_EAST, y + GOTO_SOUTH * 2).set(x, y);
+    }
+
 private:
     const chess_row_set m_row_set;
-    const size_t m_x_bouudary;
+    const size_t m_x_boundary;
     const size_t m_y_boundary;
     vector<vector<bool>> m_has_threatening;
 };
