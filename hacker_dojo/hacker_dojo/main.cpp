@@ -125,7 +125,6 @@ public:
                 }
                 catch (const out_of_range oor)
                 {
-                    cout << "error" << endl;
                 }
             }
         }
