@@ -102,66 +102,60 @@ public:
             for (size_t x = 0; x < _row.size(); x++)
             {
                 // P(Pawn, Soldier), N(Knight/Horse), B(Bishop/Elephant), R(Rook/Car), Q(Queen), K(King)
-                try
+                switch (_row.at(x))
                 {
-                    switch (_row.at(x))
-                    {
-                    case 'p':
-                        move(x, y, MOVING_METHOD::STEP, MOVING_DIRECTION::SOUTHEAST);
-                        move(x, y, MOVING_METHOD::STEP, MOVING_DIRECTION::SOUTHWEST);
-                        set_and_check_boundary(x, y);
-                        break;
-                    case 'P':
-                        move(x, y, MOVING_METHOD::STEP, MOVING_DIRECTION::NORTHEAST);
-                        move(x, y, MOVING_METHOD::STEP, MOVING_DIRECTION::NORTHWEST);
-                        set_and_check_boundary(x, y);
-                        break;
-                    case 'n': case 'N':
-                        knight_movement(y, x);
-                        set_and_check_boundary(x, y);
-                        break;
-                    case 'b': case 'B':
-                        move(x, y, MOVING_METHOD::CONTINUE, MOVING_DIRECTION::SOUTHEAST);
-                        move(x, y, MOVING_METHOD::CONTINUE, MOVING_DIRECTION::SOUTHWEST);
-                        move(x, y, MOVING_METHOD::CONTINUE, MOVING_DIRECTION::NORTHEAST);
-                        move(x, y, MOVING_METHOD::CONTINUE, MOVING_DIRECTION::NORTHWEST);
-                        set_and_check_boundary(x, y);
-                        break;
-                    case 'r': case 'R':
-                        move(x, y, MOVING_METHOD::CONTINUE, MOVING_DIRECTION::NORTH);
-                        move(x, y, MOVING_METHOD::CONTINUE, MOVING_DIRECTION::EAST);
-                        move(x, y, MOVING_METHOD::CONTINUE, MOVING_DIRECTION::SOUTH);
-                        move(x, y, MOVING_METHOD::CONTINUE, MOVING_DIRECTION::WEST);
-                        set_and_check_boundary(x, y);
-                        break;
-                    case 'q': case 'Q':
-                        move(x, y, MOVING_METHOD::CONTINUE, MOVING_DIRECTION::SOUTHEAST);
-                        move(x, y, MOVING_METHOD::CONTINUE, MOVING_DIRECTION::SOUTHWEST);
-                        move(x, y, MOVING_METHOD::CONTINUE, MOVING_DIRECTION::NORTHEAST);
-                        move(x, y, MOVING_METHOD::CONTINUE, MOVING_DIRECTION::NORTHWEST);
-                        move(x, y, MOVING_METHOD::CONTINUE, MOVING_DIRECTION::NORTH);
-                        move(x, y, MOVING_METHOD::CONTINUE, MOVING_DIRECTION::EAST);
-                        move(x, y, MOVING_METHOD::CONTINUE, MOVING_DIRECTION::SOUTH);
-                        move(x, y, MOVING_METHOD::CONTINUE, MOVING_DIRECTION::WEST);
-                        set_and_check_boundary(x, y);
-                        break;
-                    case'k': case 'K':
-                        move(x, y, MOVING_METHOD::STEP, MOVING_DIRECTION::SOUTHEAST);
-                        move(x, y, MOVING_METHOD::STEP, MOVING_DIRECTION::SOUTHWEST);
-                        move(x, y, MOVING_METHOD::STEP, MOVING_DIRECTION::NORTHEAST);
-                        move(x, y, MOVING_METHOD::STEP, MOVING_DIRECTION::NORTHWEST);
-                        move(x, y, MOVING_METHOD::STEP, MOVING_DIRECTION::NORTH);
-                        move(x, y, MOVING_METHOD::STEP, MOVING_DIRECTION::EAST);
-                        move(x, y, MOVING_METHOD::STEP, MOVING_DIRECTION::SOUTH);
-                        move(x, y, MOVING_METHOD::STEP, MOVING_DIRECTION::WEST);
-                        set_and_check_boundary(x, y);
-                        break;
-                    default:
-                        break;
-                    }
-                }
-                catch (const out_of_range oor)
-                {
+                case 'p':
+                    move(x, y, MOVING_METHOD::STEP, MOVING_DIRECTION::SOUTHEAST);
+                    move(x, y, MOVING_METHOD::STEP, MOVING_DIRECTION::SOUTHWEST);
+                    set_and_check_boundary(x, y);
+                    break;
+                case 'P':
+                    move(x, y, MOVING_METHOD::STEP, MOVING_DIRECTION::NORTHEAST);
+                    move(x, y, MOVING_METHOD::STEP, MOVING_DIRECTION::NORTHWEST);
+                    set_and_check_boundary(x, y);
+                    break;
+                case 'n': case 'N':
+                    knight_movement(y, x);
+                    set_and_check_boundary(x, y);
+                    break;
+                case 'b': case 'B':
+                    move(x, y, MOVING_METHOD::CONTINUE, MOVING_DIRECTION::SOUTHEAST);
+                    move(x, y, MOVING_METHOD::CONTINUE, MOVING_DIRECTION::SOUTHWEST);
+                    move(x, y, MOVING_METHOD::CONTINUE, MOVING_DIRECTION::NORTHEAST);
+                    move(x, y, MOVING_METHOD::CONTINUE, MOVING_DIRECTION::NORTHWEST);
+                    set_and_check_boundary(x, y);
+                    break;
+                case 'r': case 'R':
+                    move(x, y, MOVING_METHOD::CONTINUE, MOVING_DIRECTION::NORTH);
+                    move(x, y, MOVING_METHOD::CONTINUE, MOVING_DIRECTION::EAST);
+                    move(x, y, MOVING_METHOD::CONTINUE, MOVING_DIRECTION::SOUTH);
+                    move(x, y, MOVING_METHOD::CONTINUE, MOVING_DIRECTION::WEST);
+                    set_and_check_boundary(x, y);
+                    break;
+                case 'q': case 'Q':
+                    move(x, y, MOVING_METHOD::CONTINUE, MOVING_DIRECTION::SOUTHEAST);
+                    move(x, y, MOVING_METHOD::CONTINUE, MOVING_DIRECTION::SOUTHWEST);
+                    move(x, y, MOVING_METHOD::CONTINUE, MOVING_DIRECTION::NORTHEAST);
+                    move(x, y, MOVING_METHOD::CONTINUE, MOVING_DIRECTION::NORTHWEST);
+                    move(x, y, MOVING_METHOD::CONTINUE, MOVING_DIRECTION::NORTH);
+                    move(x, y, MOVING_METHOD::CONTINUE, MOVING_DIRECTION::EAST);
+                    move(x, y, MOVING_METHOD::CONTINUE, MOVING_DIRECTION::SOUTH);
+                    move(x, y, MOVING_METHOD::CONTINUE, MOVING_DIRECTION::WEST);
+                    set_and_check_boundary(x, y);
+                    break;
+                case'k': case 'K':
+                    move(x, y, MOVING_METHOD::STEP, MOVING_DIRECTION::SOUTHEAST);
+                    move(x, y, MOVING_METHOD::STEP, MOVING_DIRECTION::SOUTHWEST);
+                    move(x, y, MOVING_METHOD::STEP, MOVING_DIRECTION::NORTHEAST);
+                    move(x, y, MOVING_METHOD::STEP, MOVING_DIRECTION::NORTHWEST);
+                    move(x, y, MOVING_METHOD::STEP, MOVING_DIRECTION::NORTH);
+                    move(x, y, MOVING_METHOD::STEP, MOVING_DIRECTION::EAST);
+                    move(x, y, MOVING_METHOD::STEP, MOVING_DIRECTION::SOUTH);
+                    move(x, y, MOVING_METHOD::STEP, MOVING_DIRECTION::WEST);
+                    set_and_check_boundary(x, y);
+                    break;
+                default:
+                    break;
                 }
             }
         }
@@ -197,7 +191,6 @@ private:
         {
             return;
         }
-        set_and_check_boundary(x, y);
 
         switch (md)
         {
