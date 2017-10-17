@@ -302,7 +302,7 @@ private:
     }
 
 private:
-    const chess_row_set m_row_set;
+    const chess_row_set &m_row_set;
     const size_t m_x_boundary;
     const size_t m_y_boundary;
     vector<vector<bool>> m_has_threatening;
