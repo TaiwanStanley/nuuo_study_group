@@ -272,7 +272,7 @@ public:
         }
     }
 
-    bool has_chess(size_t x, size_t y)
+    bool has_chess(size_t x, size_t y) const
     {
         try
         {
