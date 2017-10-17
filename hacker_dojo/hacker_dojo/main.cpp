@@ -13,7 +13,7 @@ class chessboard
 public:
     enum MOVING_METHOD
     {
-        STEP,
+        STEP = 0,
         CONTINUE
     };
 
