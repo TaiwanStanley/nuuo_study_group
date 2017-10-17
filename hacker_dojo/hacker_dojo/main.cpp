@@ -30,7 +30,7 @@ public:
     };
 
 public:
-    class chess_row_set
+    class row_set
     {
     public:
         void insert_row(const string &row)
@@ -172,7 +172,7 @@ public:
     };
 
 public:
-    chessboard(const chess_row_set& _row_set, size_t x, size_t y) :
+    chessboard(const row_set& _row_set, size_t x, size_t y) :
         m_row_set(_row_set),
         m_x_boundary(x),
         m_y_boundary(y),
@@ -302,7 +302,7 @@ private:
     }
 
 private:
-    const chess_row_set &m_row_set;
+    const row_set &m_row_set;
     const size_t m_x_boundary;
     const size_t m_y_boundary;
     vector<vector<bool>> m_has_threatening;
@@ -313,13 +313,13 @@ void testcases(const string &fen_str)
     istringstream iss(fen_str);
 
     string row;
-    chessboard::chess_row_set row_set;
+    chessboard::row_set _row_set;
     while (getline(iss, row, '/'))
     {
-        row_set.insert_row(row);
+        _row_set.insert_row(row);
     }
 
-    chessboard chess_game(row_set, 8, 8);
+    chessboard chess_game(_row_set, 8, 8);
     cout << chess_game.get_number_of_safe_squares() << endl;
 }
 
